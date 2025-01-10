@@ -1,0 +1,16 @@
+{
+  "common": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "settings": "설정",
+    "save": "저장"
+  },
+  "home": {
+    "title": "Neo-Quesdon",
+    "subtitle": "Misskey / CherryPick / Mastodon 에서 사용할 수 있는 새로운 Quesdon"
+  },
+  "error": {
+    "user_not_exist": "사용자가 존재하지 않습니다",
+    "bad_request": "잘못된 요청입니다"
+  }
+}

@@ -9,6 +9,7 @@ import GithubRepoLink from '@/app/_components/github';
 import DialogModalOneButton from '@/app/_components/modalOneButton';
 import { loginCheck } from '@/utils/checkLogin/fastLoginCheck';
 import { logout } from '@/utils/logout/logout';
+import { useTranslation } from 'react-i18next';
 
 interface FormValue {
   address: string;
@@ -81,7 +82,12 @@ function convertHost(urlOrHostOrHandle: string) {
   return urlOrHostOrHandle.toLowerCase();
 }
 
-export default function Home() {
+export default function Home({
+  params: { lng }
+}: {
+  params: { lng: string }
+}) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessage, setErrorMessage] = useState<string>();
   const errModalRef = useRef<HTMLDialogElement>(null);
@@ -108,7 +114,7 @@ export default function Home() {
           case 'cherrypick':
             misskeyAuth(payload)
               .then((r) => {
-                router.replace(r.url);
+                router.replace(`/${lng}${r.url}`);
               })
               .catch((err) => {
                 setErrorMessage(err);
@@ -181,7 +187,7 @@ export default function Home() {
             <h1 className="text-7xl font-bold z-10 mb-2 desktop:mb-0">Neo-Quesdon</h1>
           </div>
           <span className="font-thin tracking-wider text-base desktop:text-lg">
-            Misskey / CherryPick / Mastodon 에서 사용할 수 있는 새로운 Quesdon
+            {t('home.subtitle')}
           </span>
         </div>
         <div className="flex flex-col desktop:flex-row items-center">
@@ -201,7 +207,7 @@ export default function Home() {
                 pattern: /\./,
                 required: 'required',
               })}
-              placeholder="serafuku.moe"
+              placeholder="yami.ski"
               className="w-full input input-bordered text-lg desktop:text-3xl mb-4 desktop:mb-0"
             />
           </form>

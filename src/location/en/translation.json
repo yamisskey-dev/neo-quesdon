@@ -1,0 +1,12 @@
+{
+    "common": {
+      "login": "login",
+      "logout": "logout", 
+      "settings": "settings",
+      "save": "save"
+    },
+    "error": {
+      "user_not_exist": "user not exitst",
+      "bad_request": "bad request"
+    }
+  }
