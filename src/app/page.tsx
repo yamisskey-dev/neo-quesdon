@@ -19,7 +19,9 @@ interface PageProps {
   params: Promise<{
     lng: string;
   }>;
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
 }
 
 /**
@@ -89,8 +91,8 @@ function convertHost(urlOrHostOrHandle: string) {
   return urlOrHostOrHandle.toLowerCase();
 }
 
-export default async function Home({ params }: PageProps) {
-  const { lng } = await params;
+export default function Home({ params }: PageProps) {
+  const [currentLng, setCurrentLng] = useState<string>('');
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessage, setErrorMessage] = useState<string>();
@@ -102,6 +104,19 @@ export default async function Home({ params }: PageProps) {
     handleSubmit,
     setValue: setFormValue,
   } = useForm<FormValue>({ defaultValues: { address: '' } });
+
+  useEffect(() => {
+    const initParams = async () => {
+      try {
+        const { lng } = await params;
+        setCurrentLng(lng);
+      } catch (error) {
+        console.error('Failed to resolve params:', error);
+      }
+    };
+
+    initParams();
+  }, [params]);
 
   const onSubmit: SubmitHandler<FormValue> = async (e) => {
     setIsLoading(true);
@@ -117,9 +132,9 @@ export default async function Home({ params }: PageProps) {
           case 'misskey':
           case 'cherrypick':
             misskeyAuth(payload)
-              .then((r) => {
-                router.replace(`/${lng}${r.url}`);
-              })
+            .then((r) => {
+                router.replace(`/${currentLng}${r.url}`);
+               })
               .catch((err) => {
                 setErrorMessage(err);
                 errModalRef.current?.showModal();
