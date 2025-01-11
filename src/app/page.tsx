@@ -15,15 +15,6 @@ interface FormValue {
   address: string;
 }
 
-interface PageProps {
-  params: Promise<{
-    lng: string;
-  }>;
-  searchParams?: Promise<{
-    [key: string]: string | string[] | undefined;
-  }>;
-}
-
 /**
  * 미스키 전용 Auth Function
  * @param loginReqDto
@@ -91,7 +82,7 @@ function convertHost(urlOrHostOrHandle: string) {
   return urlOrHostOrHandle.toLowerCase();
 }
 
-export default function Home({ params }: PageProps) {
+export default function Home() {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessage, setErrorMessage] = useState<string>();
