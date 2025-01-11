@@ -16,9 +16,9 @@ interface FormValue {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     lng: string;
-  };
+  }>;
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
@@ -89,8 +89,8 @@ function convertHost(urlOrHostOrHandle: string) {
   return urlOrHostOrHandle.toLowerCase();
 }
 
-export default function Home({ params }: PageProps) {
-  const { lng } = params;
+export default async function Home({ params }: PageProps) {
+  const { lng } = await params;
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessage, setErrorMessage] = useState<string>();
