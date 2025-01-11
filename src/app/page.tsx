@@ -10,7 +10,7 @@ import DialogModalOneButton from '@/app/_components/modalOneButton';
 import { loginCheck } from '@/utils/checkLogin/fastLoginCheck';
 import { logout } from '@/utils/logout/logout';
 import { useTranslation } from 'react-i18next';
-import type { PageProps } from '@/app/index';
+import type { PageProps } from './types';
 
 interface FormValue {
   address: string;
