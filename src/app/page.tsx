@@ -15,10 +15,11 @@ interface FormValue {
   address: string;
 }
 
-interface HomeProps {
+interface PageProps {
   params: {
     lng: string;
   };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 /**
@@ -88,7 +89,7 @@ function convertHost(urlOrHostOrHandle: string) {
   return urlOrHostOrHandle.toLowerCase();
 }
 
-export default function Home({ params }: HomeProps) {
+export default function Home({ params }: PageProps) {
   const { lng } = params;
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
