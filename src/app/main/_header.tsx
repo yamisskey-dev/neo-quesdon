@@ -10,12 +10,14 @@ import WebSocketState from '../_components/webSocketState';
 import { MyProfileContext, NotificationContext } from './layout';
 import { webSocketManager } from '@/app/main/_websocketManager';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
+import { useTranslation } from 'react-i18next';
 
 type headerProps = {
   questionsNum: number;
   loginChecked: boolean;
 };
 export default function MainHeader({ questionsNum, loginChecked }: headerProps) {
+  const { t } = useTranslation();
   const profile = useContext(MyProfileContext);
   const logoutModalRef = useRef<HTMLDialogElement>(null);
   const [questionsToastMenu, setQuestionsToastMenu] = useState<boolean>(false);
@@ -116,7 +118,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
             >
               <li>
-                <Link href={'/'}>로그인</Link>
+                <Link href={'/'}>{t('header.login')}</Link>
               </li>
             </ul>
           </div>
@@ -132,7 +134,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
               </li>
               <li className="flex">
                 <Link href={'/main/questions'}>
-                  <span>미답변 질문</span>
+                  <span>{t('header.unanswered')}</span>
                   {questionsNum && questionsNum > 0 ? (
                     <>
                       <div className="badge badge-warning badge-sm">{questionsNum}</div>
@@ -144,7 +146,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
               </li>
               <li>
                 <Link href={'/main/notification'} scroll={false}>
-                  <span>알림</span>
+                  <span>{t('header.notification')}</span>
                   {notiNum > 0 ? (
                     <>
                       <div className="badge badge-warning badge-sm">{notiNum}</div>

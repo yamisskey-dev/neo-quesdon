@@ -7,7 +7,20 @@
   },
   "home": {
     "title": "Neo-Quesdon",
-    "subtitle": "Misskey / CherryPick / Mastodon 에서 사용할 수 있는 새로운 Quesdon"
+    "subtitle": "Misskey / CherryPick / Mastodon 에서 사용할 수 있는 새로운 Quesdon",
+    "login": "로그인",
+    "timeline": "로그인 없이 즐기기"
+  },
+  "main": {
+    "answers": "최근 올라온 답변들",
+    "nothing": "답변이 없습니다",
+    "done": "🥂 끝이야 한 잔 해"
+  },
+  "header": {
+    "login": "로그인",
+    "mypage": "마이페이지",
+    "unanswered": "미답변 질문",
+    "notification": "알림"
   },
   "error": {
     "user_not_exist": "사용자가 존재하지 않습니다",

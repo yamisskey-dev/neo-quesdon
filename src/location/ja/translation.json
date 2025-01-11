@@ -7,7 +7,20 @@
   },
   "home": {
     "title": "Neo-Quesdon",
-    "subtitle": "Misskey / CherryPick / Mastodon で使える新しい Quesdon"
+    "subtitle": "Misskey / CherryPick / Mastodon で使える新しい Quesdon",
+    "login": "ログイン",
+    "timeline": "タイムライン"
+  },
+  "main": {
+    "answers": "最近の回答",
+    "nothing": "回答がありません",
+    "done": "全ての回答が完了しました"
+  },
+  "header": {
+    "login": "ログイン",
+    "mypage": "マイページ",
+    "unanswered": "未回答の質問",
+    "notification": "通知"
   },
   "error": {
     "user_not_exist": "ユーザーが存在しません",

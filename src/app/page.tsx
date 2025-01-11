@@ -223,7 +223,7 @@ export default function Home({
                 </div>
               ) : (
                 <div>
-                  <span>로그인</span>
+                  <span>{t('home.login')}</span>
                 </div>
               )}
             </button>
@@ -232,7 +232,7 @@ export default function Home({
               className={`btn ml-4 ${isLoading ? 'btn-disabled' : 'btn-outline'}`}
               onClick={goWithoutLogin}
             >
-              로그인 없이 즐기기
+              {t('home.timeline')}
             </button>
           </div>
         </div>
