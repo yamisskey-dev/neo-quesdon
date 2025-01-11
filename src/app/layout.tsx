@@ -46,13 +46,14 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const headersList = headers();
+}) {
+  const headersList = await headers();
   const lng = headersList.get('accept-language')?.split(',')[0] || 'en';
+
   const backgroundImage = getRandomBackground();
   
   return (
