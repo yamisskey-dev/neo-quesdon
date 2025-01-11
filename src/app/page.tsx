@@ -83,9 +83,8 @@ function convertHost(urlOrHostOrHandle: string) {
   return urlOrHostOrHandle.toLowerCase();
 }
 
-export default function Home({ 
-  params: { lng }
-}: PageProps) {
+export default function Home({ params }: PageProps) {
+  const { lng } = params;
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errMessage, setErrorMessage] = useState<string>();
