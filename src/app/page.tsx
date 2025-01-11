@@ -10,10 +10,15 @@ import DialogModalOneButton from '@/app/_components/modalOneButton';
 import { loginCheck } from '@/utils/checkLogin/fastLoginCheck';
 import { logout } from '@/utils/logout/logout';
 import { useTranslation } from 'react-i18next';
-import type { PageProps } from './types';
 
 interface FormValue {
   address: string;
+}
+
+interface HomeProps {
+  params: {
+    lng: string;
+  };
 }
 
 /**
@@ -83,7 +88,7 @@ function convertHost(urlOrHostOrHandle: string) {
   return urlOrHostOrHandle.toLowerCase();
 }
 
-export default function Home({ params }: PageProps) {
+export default function Home({ params }: HomeProps) {
   const { lng } = params;
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
