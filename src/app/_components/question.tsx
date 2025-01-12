@@ -6,6 +6,7 @@ import { RefObject, useEffect, useLayoutEffect, useRef } from 'react';
 import { CreateAnswerDto } from '@/app/_dto/answers/create-answer.dto';
 import { questionDto } from '@/app/_dto/questions/question.dto';
 import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 interface formValue {
   answer: string;
@@ -56,6 +57,7 @@ export default function Question({
     },
     mode: 'onChange',
   });
+  const { t } = useTranslation();
 
   const onCtrlEnter = async (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -172,7 +174,7 @@ export default function Question({
               setId(singleQuestion.id);
             }}
           >
-            삭제
+            {t('question.delete')}
           </span>
           <span
             className="text-red-800 font-bold ml-2 cursor-pointer"
@@ -181,7 +183,7 @@ export default function Question({
               blockingRef.current?.showModal();
             }}
           >
-            질문자 차단
+            {t('question.block')}
           </span>
         </div>
       </div>
@@ -236,7 +238,7 @@ export default function Question({
               </div>
               <div className="w-full desktop:w-fit flex justify-center">
                 <button type={'submit'} className="btn btn-outline dark:border-white dark:text-slate-200 h-10 btn-md ">
-                  답변
+                  {t('question.submit')}
                 </button>
               </div>
             </div>

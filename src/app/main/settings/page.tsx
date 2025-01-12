@@ -16,6 +16,7 @@ import { MyProfileContext } from '@/app/main/layout';
 import { MyProfileEv } from '@/app/main/_events';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
 import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 export type FormValue = {
   stopAnonQuestion: boolean;
@@ -63,6 +64,7 @@ function Divider({ className }: { className?: string }) {
 }
 
 export default function Settings() {
+  const { t } = useTranslation();
   const userInfo = useContext(MyProfileContext);
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
   const [defaultFormValue, setDefaultFormValue] = useState<FormValue>();
@@ -206,7 +208,7 @@ export default function Settings() {
                   </div>
                 </div>
                 <div className="desktop:ml-2 flex flex-col items-center desktop:items-start">
-                  <span className="text-xl font-thin">안녕하세요,</span>
+                  <span className="text-xl font-thin">{t('settings.hello')},</span>
                   <div className="flex text-2xl items-center">
                     <NameComponents username={userInfo?.name} width={24} height={24} />
                     <span>님!</span>
@@ -215,24 +217,24 @@ export default function Settings() {
               </div>
               <div className="flex flex-col col-span-2 items-center">
                 <div className="text-3xl flex justify-center mt-4 w-full window:w-[90%] desktop:w-full">
-                  <span>우리만의 비밀설정창</span>
+                  <span>{t('settings.window')}</span>
                 </div>
                 <Divider />
                 <div className="w-full window:w-[70%] flex flex-col desktop:w-full gap-2 desktop:grid desktop:grid-cols-2">
                   {userInfo && (
                     <>
-                      <CollapseMenu id={'basicSetting'} text="기본설정">
+                      <CollapseMenu id={'basicSetting'} text="preferences">
                         <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col items-center">
                           <div className="grid grid-cols-[20%_80%] desktop:w-[24rem] desktop:grid-cols-[7rem_100%] gap-2 items-center p-2">
                             <input {...register('stopNewQuestion')} type="checkbox" className="toggle toggle-success" />
-                            <span className="font-thin">더 이상 질문을 받지 않기</span>
+                            <span className="font-thin">{t('settings.stop')}</span>
                             <input
                               {...register('stopAnonQuestion')}
                               type="checkbox"
                               className="toggle toggle-success"
                               disabled={formValues.stopNewQuestion}
                             />
-                            <span className="font-thin">익명 질문을 받지 않기</span>
+                            <span className="font-thin">{t('settings.refuse')}</span>
                             <input
                               {...register('stopNotiNewQuestion')}
                               type="checkbox"

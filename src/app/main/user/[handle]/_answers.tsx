@@ -10,6 +10,7 @@ import DialogModalTwoButton from '@/app/_components/modalTwoButton';
 import { AnswerDeletedEvPayload } from '@/app/_dto/websocket-event/websocket-event.dto';
 import { AnswerEv } from '@/app/main/_events';
 import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 type ResponseType = {
   answers: AnswerDto[];
@@ -31,6 +32,7 @@ async function fetchProfile(handle: string) {
 }
 
 export default function UserPage() {
+  const { t } = useTranslation();
   const { handle } = useParams() as { handle: string };
   const profileHandle = decodeURIComponent(handle);
 
@@ -181,14 +183,14 @@ export default function UserPage() {
                       </div>
                     ) : (
                       <div>
-                        <span className="text-3xl">🥂 끝이야 한 잔 해</span>
+                        <span className="text-3xl">{t('answer.begin')}</span>
                       </div>
                     )}
                   </div>
                 </div>
               ) : (
                 <div className="text-2xl flex gap-2 justify-center items-center border shadow rounded-box p-2 glass">
-                  <span>🍺 질문함이 맥주있어요...</span>
+                  <span>{t('answer.end')}</span>
                 </div>
               )}
             </div>

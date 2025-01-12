@@ -9,12 +9,34 @@
     "title": "Neo-Quesdon",
     "subtitle": "Misskey / CherryPick / Mastodon で使える新しい Quesdon",
     "login": "ログイン",
-    "timeline": "タイムライン"
+    "timeline": "ログインせずに覗く"
   },
   "main": {
     "answers": "最近の回答",
     "nothing": "回答がありません",
     "done": "全ての回答が完了しました"
+  },
+  "profile": {
+    "inbox": "の質問箱！",
+    "author": "著者開示",
+    "submit": "質問する",
+    "share": "に質問箱ページを共有"
+  },
+  "answer": {
+    "header:": "回答",
+    "begin": "質問箱にビールがありますよ🍺...",
+    "end": "終わりだよ、一杯飲もう。"
+  },
+  "question": {
+    "submit:": "回答",
+    "delete": "削除",
+    "block": "質問者をブロック"
+  },
+  "settings": {
+    "hello:": "こんにちは",
+    "window": "私たちだけの秘密の設定窓口",
+    "stop": "質問を受け取らないようにする",
+    "refuse": "匿名質問を受け取らないようにする"
   },
   "header": {
     "login": "ログイン",

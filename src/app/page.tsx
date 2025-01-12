@@ -237,9 +237,9 @@ export default function Home() {
         <GithubRepoLink />
       </footer>
       <DialogModalOneButton
-        title={'오류'}
-        body={`로그인 오류가 발생했어요! ${errMessage}`}
-        buttonText={'확인'}
+        title={'Error'}
+        body={`A login error has occurred! ${errMessage}`}
+        buttonText={'Confirm'}
         ref={errModalRef}
       />
     </div>

@@ -14,6 +14,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { FaEllipsisVertical } from 'react-icons/fa6';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
 import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 type FormValue = {
   question: string;
@@ -31,6 +32,7 @@ async function fetchProfile(handle: string) {
 }
 
 export default function Profile() {
+  const { t } = useTranslation();
   const { handle } = useParams() as { handle: string };
   const profileHandle = decodeURIComponent(handle);
 
@@ -345,10 +347,10 @@ export default function Profile() {
                 onClick={() => setValue('nonAnonQuestion', !nonAnonQuestion)}
               />
               <input type="hidden" {...register('nonAnonQuestion')} />
-              <span>작성자 공개</span>
+              <span>{t('profile.author')}</span>
             </div>
             <button type="submit" className="btn btn-primary">
-              질문하기
+              {t('profile.submit')}
             </button>
           </div>
         </form>
@@ -356,7 +358,7 @@ export default function Profile() {
       {localHandle === profileHandle && (
         <div className="h-fit py-4 glass rounded-box flex flex-col items-center shadow mb-2 dark:text-white">
           <a className="link" href={shareUrl()} target="_blank" rel="noreferrer">
-            {userProfile?.instanceType}에 질문상자 페이지를 공유
+            {userProfile?.instanceType}{t('profile.share')}
           </a>
         </div>
       )}

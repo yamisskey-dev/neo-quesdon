@@ -16,6 +16,28 @@
     "nothing": "답변이 없습니다",
     "done": "🥂 끝이야 한 잔 해"
   },
+  "profile": {
+    "inbox": "님의 질문함이에요!",
+    "author": "작성자 공개",
+    "submit": "질문하기",
+    "share": "에 질문상자 페이지를 공유"
+  },
+  "answer": {
+    "header:": "답변",
+    "begin": "🥂 끝이야 한 잔 해",
+    "end": "🍺 질문함이 맥주있어요..."
+  },
+  "question": {
+    "submit:": "질문",
+    "delete": "삭제",
+    "block": "질문자 차단"
+  },
+  "settings": {
+    "hello:": "안녕하세요",
+    "window": "우리만의 비밀설정창",
+    "stop": "더 이상 질문을 받지 않기",
+    "refuse": "익명 질문을 받지 않기"
+  },
   "header": {
     "login": "로그인",
     "mypage": "마이페이지",
