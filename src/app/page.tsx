@@ -105,29 +105,32 @@ export default function Home() {
         router.push('/main');
         return;
       }
-
-      const inputAddress = data.address.trim() || 'yami.ski';
-      const host = convertHost(inputAddress);
+  
+      // Login process
+      const host = convertHost(data.address);
       localStorage.setItem('server', host);
-
+      
       const type = await detectInstance(host);
       const payload: loginReqDto = { host };
   
+      let redirectUrl: string;
       switch (type) {
         case 'misskey':
         case 'cherrypick': {
-          const r = await misskeyAuth(payload);
-          router.push(r.url);
+          const response = await misskeyAuth(payload);
+          redirectUrl = response.url;
           break;
         }
         case 'mastodon': {
-          const r = await mastodonAuth(payload);
-          router.push(r);
+          redirectUrl = await mastodonAuth(payload);
           break;
         }
         default:
           throw new Error(`Unknown instance type: ${type}`);
       }
+  
+      router.push(redirectUrl);
+  
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : 'Unknown error');
       errModalRef.current?.showModal();
