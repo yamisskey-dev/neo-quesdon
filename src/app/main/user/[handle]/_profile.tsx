@@ -106,11 +106,7 @@ export default function Profile() {
 
   const shareUrl = () => {
     const server = localStorage.getItem('server');
-    const text = `저의 ${josa(
-      userProfile?.questionBoxName,
-      '이에요!',
-      '예요!',
-    )} #neo_quesdon ${location.origin}/main/user/${userProfile?.handle}`;
+    const text = `${userProfile?.questionBoxName}${t('profile.inbox')} #neo_quesdon ${location.origin}/main/user/${userProfile?.handle}`;
     return `https://${server}/share?text=${encodeURIComponent(text)}`;
   };
 
