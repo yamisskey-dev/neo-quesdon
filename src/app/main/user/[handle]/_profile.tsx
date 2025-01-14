@@ -293,12 +293,12 @@ export default function Profile() {
             {userProfile && userProfile.stopNewQuestion ? (
               <div className="flex flex-col items-center desktop:flex-row">
                 <NameComponents username={userProfile.name} width={32} height={32} />
-                <span>님은 지금 질문을 받지 않고 있어요...</span>
+                <span>{t('profile.none')}</span>
               </div>
             ) : (
               <div className="flex flex-col items-center desktop:flex-row window:flex-row window:text-2xl">
                 <NameComponents username={userProfile?.name} width={32} height={32} />
-                <span>님의 {josa(userProfile?.questionBoxName, '이에요!', '예요!')}</span>
+                <span>{t('profile.inbox')}</span>
               </div>
             )}
           </div>
@@ -309,7 +309,7 @@ export default function Profile() {
               required: 'required',
               maxLength: 1000,
             })}
-            placeholder="질문 내용을 입력해 주세요"
+            placeholder={t('profile.placeholder')}
             className={`w-[90%] mb-2 font-thin leading-loose textarea ${
               errors.question ? 'textarea-error' : 'textarea-bordered'
             }`}

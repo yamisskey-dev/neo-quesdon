@@ -83,7 +83,7 @@ export default function Question({
     if (detectWhiteSpaces.test(e.answer) === true) {
       setError('answer', {
         type: 'answerOnlyWhiteSpace',
-        message: '답변에 아무말 안 하시게요...?',
+        message: t('question.nocomment'),
       });
       return;
     }
@@ -159,7 +159,7 @@ export default function Question({
           {singleQuestion.questioner ? (
             <Link href={`/main/user/${singleQuestion.questioner}`}>{singleQuestion.questioner}</Link>
           ) : (
-            '익명의 질문자'
+            t('question.anonymous')
           )}
         </div>
         <div className="chat-bubble flex items-center text-sm break-all window:text-xl desktop:text-2xl text-slate-200">

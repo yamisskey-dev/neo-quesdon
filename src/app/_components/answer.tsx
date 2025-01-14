@@ -7,6 +7,7 @@ import { AnswerWithProfileDto } from '../_dto/answers/Answers.dto';
 import { userProfileDto } from '../_dto/fetch-profile/Profile.dto';
 import { useParams } from 'next/navigation';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
+import { useTranslation } from 'react-i18next';
 
 interface askProps {
   value: AnswerWithProfileDto;
@@ -28,6 +29,7 @@ export async function fetchProfile(value: AnswerWithProfileDto) {
 }
 
 export default function Answer({ value, idState, ref }: askProps) {
+  const { t } = useTranslation();
   const { handle } = useParams() as { handle: string };
   const [showNsfw, setShowNsfw] = useState(false);
   const [userInfo, setUserInfo] = useState<userProfileDto>();
@@ -61,7 +63,7 @@ export default function Answer({ value, idState, ref }: askProps) {
               {value.questioner ? (
                 <Link href={`/main/user/${value.questioner}`}>{value.questioner}</Link>
               ) : (
-                '익명의 질문자'
+                t('answer.anonymous')
               )}
             </div>
             <div className="flex items-center text-sm break-all window:text-xl desktop:text-2xl chat-bubble text-slate-200">

@@ -18,17 +18,22 @@
   },
   "profile": {
     "inbox": "님의 질문함이에요!",
+    "none": "님은 지금 질문을 받지 않고 있어요...",
+    "placeholder": "질문 내용을 입력해 주세요",
     "author": "작성자 공개",
     "submit": "질문하기",
     "share": "에 질문상자 페이지를 공유"
   },
   "answer": {
     "header:": "답변",
+    "anonymous": "익명의 질문자",
     "begin": "🥂 끝이야 한 잔 해",
     "end": "🍺 질문함이 맥주있어요..."
   },
   "question": {
     "submit:": "질문",
+    "anonymous": "익명의 질문자",
+    "nocomment": "답변에 아무말 안 하시게요...?",
     "delete": "삭제",
     "block": "질문자 차단"
   },

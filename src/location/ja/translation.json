@@ -18,17 +18,22 @@
   },
   "profile": {
     "inbox": "の質問箱です！",
+    "none": "は今質問を受け取っていません...",
+    "placeholder": "質問内容を入力してください",
     "author": "著者開示",
     "submit": "質問する",
     "share": "に質問箱ページを共有"
   },
   "answer": {
     "header:": "回答",
+    "anonymous": "匿名の質問者",
     "begin": "質問箱にビールがありますよ🍺...",
     "end": "終わりだよ、一杯飲もう。"
   },
   "question": {
     "submit:": "回答",
+    "anonymous": "匿名の質問者",
+    "nocomment": "回答に何も言わないの？",
     "delete": "削除",
     "block": "質問者をブロック"
   },
