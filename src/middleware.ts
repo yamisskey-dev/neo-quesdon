@@ -45,35 +45,50 @@ function normalizeLocale(locale: string): ValidLocale {
   }
 }
 
+let previousLocale: string | null = null;
+
 function getLocale(request: NextRequest): string {
   try {
     // Check cookie first
     const cookieLocale = request.cookies.get(COOKIE_NAME)?.value;
     if (cookieLocale) {
       const normalized = normalizeLocale(cookieLocale);
-      console.debug(`Cookie locale: ${cookieLocale} -> ${normalized}`);
+      if (normalized !== previousLocale) {
+        console.info(`[i18n] Locale changed to: ${normalized}`);
+        previousLocale = normalized;
+      }
       return normalized;
     }
 
     // Parse accept-language headers
     const languages = request.headers.get('accept-language');
-    if (!languages) return fallbackLng;
+    if (!languages) {
+      if (fallbackLng !== previousLocale) {
+        console.info(`[i18n] No language header, using fallback: ${fallbackLng}`);
+        previousLocale = fallbackLng;
+      }
+      return fallbackLng;
+    }
 
+    // Detect user languages
     const userLanguages = new Negotiator({
       headers: { 'accept-language': languages }
     }).languages()
-    .map(lang => normalizeLocale(lang))
-    .filter(lang => VALID_LOCALES.has(lang));
+      .map(lang => normalizeLocale(lang))
+      .filter(lang => VALID_LOCALES.has(lang));
 
-    console.debug(`Detected languages: ${userLanguages.join(', ')}`);
-    return userLanguages[0] || fallbackLng;
+    const detectedLocale = userLanguages[0] || fallbackLng;
+    if (detectedLocale !== previousLocale) {
+      console.info(`[i18n] Detected locale: ${detectedLocale}`);
+      previousLocale = detectedLocale;
+    }
+    return detectedLocale;
+
   } catch (error) {
-    console.error('Locale detection error:', error);
+    console.error('[i18n] Locale detection error:', error);
     return fallbackLng;
   }
 }
-
-// ...existing code...
 
 function shouldSkipPath(pathname: string): boolean {
   return STATIC_FILE_PATTERN.test(pathname) || 
