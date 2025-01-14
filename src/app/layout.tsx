@@ -5,22 +5,22 @@ import Image from 'next/image';
 import { I18nProvider } from './i18n/client';
 import { headers } from 'next/headers';
 
-const theJamsil = localFont({
+const sarasaGothic = localFont({
   src: [
     {
-      path: './fonts/The-Jamsil-1-Thin.ttf', 
-      weight: '100',
+      path: './fonts/SarasaGothicJ-Light.ttf',
+      weight: '300',
     },
     {
-      path: './fonts/The-Jamsil-3-Regular.ttf',
+      path: './fonts/SarasaGothicJ-Regular.ttf',
       weight: '400',
     },
     {
-      path: './fonts/The-Jamsil-6-ExtraBold.ttf',
-      weight: '800',
+      path: './fonts/SarasaGothicJ-Bold.ttf',
+      weight: '700',
     },
   ],
-  variable: '--font-the-jamsil',
+  variable: '--font-sarasa-gothic',
 });
 
 const BACKGROUND_IMAGES = [
@@ -58,7 +58,7 @@ export default async function RootLayout({
   
   return (
     <html lang={lng}>
-      <body className={`${theJamsil.variable} antialiased font-[family-name:var(--font-the-jamsil)] bg-transparent w-[100vw] h-[100vh] relative`}>
+      <body className={`${sarasaGothic.variable} antialiased font-[family-name:var(--font-sarasa-gothic)] bg-transparent w-[100vw] h-[100vh] relative`}>
         <Image
           src={backgroundImage}
           alt="Background"
