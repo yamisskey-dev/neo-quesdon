@@ -6,7 +6,6 @@ import NameComponents from '@/app/_components/NameComponents';
 import { SearchBlockListResDto } from '@/app/_dto/blocking/blocking.dto';
 import { CreateQuestionDto } from '@/app/_dto/questions/create-question.dto';
 import { userProfileDto } from '@/app/_dto/fetch-profile/Profile.dto';
-import josa from '@/app/api/_utils/josa';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -41,8 +40,8 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
   const [questionSendingDoneMessage, setQuestionSendingDoneMessage] = useState<{ title: string; body: string }>({
-    title: '성공',
-    body: '질문했어요!',
+    title: t('common.success'),
+    body: t('profile.question_sent'),
   });
   const questionSendingModalRef = useRef<HTMLDialogElement>(null);
   const blockConfirmModalRef = useRef<HTMLDialogElement>(null);
@@ -151,14 +150,14 @@ export default function Profile() {
       if (user_handle === null) {
         setError('nonAnonQuestion', {
           type: 'notLoggedIn',
-          message: '작성자 공개를 하려면 로그인을 해주세요!',
+          message: t('error.login_required_for_public_question')
         });
         return;
       }
       if (detectWhiteSpaces.test(e.question) === true) {
         setError('question', {
           type: 'questionOnlyWhiteSpace',
-          message: '아무것도 없는 질문을 보내시려구요...?',
+          message: t('error.empty_question')
         });
         return;
       }
@@ -185,14 +184,14 @@ export default function Profile() {
       if (userProfile?.stopAnonQuestion === true) {
         setError('nonAnonQuestion', {
           type: 'stopAnonQuestion',
-          message: '익명 질문은 받지 않고 있어요...',
+          message: t('error.anonymous_questions_not_accepted')
         });
         return;
       } else {
         if (detectWhiteSpaces.test(e.question) === true) {
           setError('question', {
             type: 'questionOnlyWhiteSpace',
-            message: '아무것도 없는 질문을 보내시려구요...?',
+            message: t('error.empty_question')
           });
           return;
         }
@@ -363,50 +362,48 @@ export default function Profile() {
       )}
       <DialogModalLoadingOneButton
         isLoading={isLoading}
-        title_loading={'보내는 중'}
+        title_loading={t('modal.sending')}
         title_done={questionSendingDoneMessage.title}
-        body_loading={'질문을 보내고 있어요...'}
+        body_loading={t('modal.sending_question')}
         body_done={questionSendingDoneMessage.body}
-        loadingButtonText={'로딩중'}
-        doneButtonText={'닫기'}
+        loadingButtonText={t('common.loading')}
+        doneButtonText={t('common.close')}
         ref={questionSendingModalRef}
       />
       <DialogModalTwoButton
-        title={'차단'}
-        body={
-          '정말 차단하시겠어요...?\n차단 이후에는 서로의 답변이 숨겨지고 차단한 사람이 나에게 질문을 할 수 없게 되어요.'
-        }
-        confirmButtonText={'확인'}
+        title={t('modal.block')}
+        body={t('modal.block_confirmation')}
+        confirmButtonText={t('common.confirm')}
         onClick={handleBlock}
-        cancelButtonText={'취소'}
+        cancelButtonText={t('common.cancel')}
         ref={blockConfirmModalRef}
       />
       <DialogModalLoadingOneButton
         isLoading={isLoading}
-        title_loading={'차단'}
-        title_done={'차단'}
-        body_loading={'차단하는 중...'}
-        body_done={'차단되었어요!'}
-        loadingButtonText={'로딩중'}
-        doneButtonText={'닫기'}
+        title_loading={t('modal.block')}
+        title_done={t('modal.block')}
+        body_loading={t('modal.blocking')}
+        body_done={t('modal.blocked')}
+        loadingButtonText={t('common.loading')}
+        doneButtonText={t('common.close')}
         ref={blockSuccessModalRef}
       />
       <DialogModalTwoButton
-        title={'차단 해제'}
-        body={'차단 해제하시겠어요?'}
-        confirmButtonText={'확인'}
+        title={t('modal.unblock')}
+        body={t('modal.unblock_confirmation')}
+        confirmButtonText={t('common.confirm')}
         onClick={handleUnBlock}
-        cancelButtonText={'취소'}
+        cancelButtonText={t('common.cancel')}
         ref={unblockConfirmModalRef}
       />
       <DialogModalLoadingOneButton
         isLoading={isLoading}
-        title_loading={'차단 해제'}
-        title_done={'차단 해제'}
-        body_loading={'차단 해제하는 중...'}
-        body_done={'차단 해제되었어요!'}
-        loadingButtonText={'로딩중'}
-        doneButtonText={'닫기'}
+        title_loading={t('modal.unblock')}
+        title_done={t('modal.unblock')}
+        body_loading={t('modal.unblocking')}
+        body_done={t('modal.unblocked')}
+        loadingButtonText={t('common.loading')}
+        doneButtonText={t('common.close')}
         ref={unblockSuccessModalRef}
       />
     </div>

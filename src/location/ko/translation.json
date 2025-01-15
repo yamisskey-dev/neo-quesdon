@@ -6,7 +6,11 @@
     "save": "저장",
     "success": "성공",
     "error": "에러",
-    "please_wait": "잠깐만요..."
+    "please_wait": "잠깐만요...",
+    "loading": "로딩중",
+    "close": "닫기",
+    "confirm": "확인",
+    "cancel": "취소"
   },
   "home": {
     "title": "Neo-Quesdon",
@@ -75,7 +79,11 @@
     "login_failed": "로그인 중에 문제가 발생했어요... 다시 시도해 보세요",
     "failed_to_load_blocklist": "차단 리스트를 불러오는데 에러가 발생했어요!",
     "unknown": "알 수 없는 오류",
-    "unknown_occurred": "알 수 없는 오류가 발생했어요! {{error_type}}, {{message}}"
+    "unknown_occurred": "알 수 없는 오류가 발생했어요! {{error_type}}, {{message}}",
+    "login_required_for_public_question": "작성자 공개를 하려면 로그인을 해주세요!",
+    "question_send_failed": "질문을 보내는데 실패했어요! {{error}}",
+    "anonymous_questions_not_accepted": "익명 질문은 받지 않고 있어요...",
+    "empty_question": "아무것도 없는 질문을 보내시려구요...?"
   },
   "auth": {
     "logging_in": "로그인하고 있어요..."
@@ -84,6 +92,16 @@
     "warning": "주의",
     "confirm_logout_all": "정말 모든 기기를 로그아웃 시킬까요?",
     "yes": "네",
-    "no": "아니오"
+    "no": "아니오",
+    "sending": "보내는 중",
+    "sending_question": "질문을 보내고 있어요...",
+    "block": "차단",
+    "block_confirmation": "정말 차단하시겠어요...?\n차단 이후에는 서로의 답변이 숨겨지고 차단한 사람이 나에게 질문을 할 수 없게 되어요.",
+    "blocking": "차단하는 중...",
+    "blocked": "차단되었어요!",
+    "unblock": "차단 해제",
+    "unblock_confirmation": "차단 해제하시겠어요?",
+    "unblocking": "차단 해제하는 중...",
+    "unblocked": "차단 해제되었어요!"
   }
 }
