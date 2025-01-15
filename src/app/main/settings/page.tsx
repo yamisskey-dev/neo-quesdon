@@ -295,19 +295,20 @@ export default function Settings() {
                                   errors.questionBoxName?.type === 'maxLength' && 'input-error'
                                 }`}
                               />
-                              <span className="font-thin">질문함 이름 (10글자 이내)</span>
+                              <span className="font-thin">{t('settings.inbox_name_limit')}</span>
                             </div>
                           </div>
                           <Divider />
                           <div className="flex flex-col desktop:w-[24rem] gap-2 items-center p-2">
-                            <div className="text-lg"> 질문 단어 뮤트 </div>
+                            <div className="text-lg">{t('settings.word_mute')}</div>
                             <div className="font-thin">
-                              뮤트할 단어를 한줄에 하나씩 입력합니다. <br /> 정규식 문법도 지원합니다.
+                              {t('settings.word_mute_description')} <br />
+                              {t('settings.regex_support')}
                             </div>
                             <textarea
                               {...register('wordMuteList')}
                               className="textarea textarea-bordered w-full min-h-[15vh] text-base"
-                              placeholder="뮤트할 단어, 또는 정규식"
+                              placeholder={t('settings.word_mute_placeholder')}
                             ></textarea>
                           </div>
                           <div className="flex w-full justify-end mt-2">
@@ -376,11 +377,10 @@ export default function Settings() {
                           <Divider />
                           <div className="font-normal text-xl py-3 flex items-center gap-2">
                             <FaUserLargeSlash />
-                            차단 목록 가져오기
+                            {t('settings.import_blocks')}
                           </div>
                           <div className="font-thin px-4 py-2 break-keep">
-                            차단 목록을 내 연합우주 계정에서 가져오는 기능이에요. 차단된 사용자는 나에게 더 이상 질문을
-                            보낼 수 없어요. 사용자를 차단하면 서로의 답변이 숨겨져요.
+                            {t('settings.import_blocks_description')}
                           </div>
                           <button
                             type="button"
@@ -413,11 +413,10 @@ export default function Settings() {
                           <Divider />
                           <div className="font-normal text-xl py-3 flex items-center gap-2">
                             <MdDeleteForever size={24} />
-                            계정 삭제하기
+                            {t('settings.delete_account')}
                           </div>
                           <div className="font-thin px-4 py-2 break-keep">
-                            네오 퀘스돈에서 이 계정을 삭제해요. 이 계정으로 했던 모든 활동은 지워져요. 이 작업은 되돌릴
-                            수 없으니 주의하세요.
+                            {t('settings.delete_account_description')}
                           </div>
                           <button
                             type="button"
@@ -437,10 +436,10 @@ export default function Settings() {
             </>
           )}
           <DialogModalTwoButton
-            title={'주의'}
-            body={'정말 모든 기기를 로그아웃 시킬까요?'}
-            confirmButtonText={'네'}
-            cancelButtonText={'아니오'}
+            title={t('modal.warning')}
+            body={t('modal.confirm_logout_all')}
+            confirmButtonText={t('modal.yes')}
+            cancelButtonText={t('modal.no')}
             ref={logoutAllModalRef}
             onClick={onLogoutAll}
           />

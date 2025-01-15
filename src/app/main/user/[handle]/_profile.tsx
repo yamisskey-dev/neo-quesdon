@@ -208,13 +208,16 @@ export default function Profile() {
         const res = await mkQuestionCreateApi(req);
         if (res.ok) {
           setIsLoading(false);
-          setQuestionSendingDoneMessage({
-            title: '성공',
-            body: '질문했어요!',
+          setQuestionSendingDoneMessage({ 
+            title: t('common.success'),
+            body: t('profile.question_sent')
           });
         } else {
           setIsLoading(false);
-          setQuestionSendingDoneMessage({ title: '에러', body: `질문을 보내는데 실패했어요! ${await res.text()}` });
+          setQuestionSendingDoneMessage({ 
+            title: t('common.error'),
+            body: t('profile.question_send_failed', {error: await res.text()})
+          });
         }
       }
     }
@@ -281,7 +284,7 @@ export default function Profile() {
               {userProfile.stopAnonQuestion && !userProfile.stopNewQuestion && (
                 <div className="chat chat-end w-32 window:w-full desktop:w-full relative bottom-[40%] right-[22%] window:right-[60%] deskstop:left-[60%]">
                   <div className="chat-bubble text-xs flex items-center bg-base-100 text-slate-700 dark:text-slate-400">
-                    작성자 공개 질문만 받아요!
+                    {t('profile.only_public_questions')}
                   </div>
                 </div>
               )}

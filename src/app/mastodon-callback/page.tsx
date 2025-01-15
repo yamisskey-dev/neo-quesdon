@@ -6,12 +6,14 @@ import { mastodonCallbackTokenClaimPayload } from '@/app/_dto/mastodon-callback/
 import { login } from '@/app/mastodon-callback/action';
 import { useRouter } from 'next/navigation';
 import DialogModalOneButton from '@/app/_components/modalOneButton';
+import { useTranslation } from 'react-i18next';
 
 const onErrorModalClose = () => {
   window.location.replace('/');
 };
 
 export default function CallbackPage() {
+  const { t } = useTranslation();
   const [id, setId] = useState<number>(0);
   const errModalRef = useRef<HTMLDialogElement>(null);
   const [errMessage, setErrorMessage] = useState<string>();
@@ -60,7 +62,7 @@ export default function CallbackPage() {
         }
       } catch (err) {
         console.error(err);
-        setErrorMessage(`로그인 중에 문제가 발생했어요... 다시 시도해 보세요`);
+        setErrorMessage(t('error.login_failed'));
         errModalRef.current?.showModal();
       }
     };
@@ -71,7 +73,7 @@ export default function CallbackPage() {
     <>
       <div className="w-full h-[100vh] flex flex-col gap-2 justify-center items-center text-3xl">
         <Image src={`/static/loading/${id}.gif`} width={64} height={64} alt="Login Loading" unoptimized />
-        <span>로그인하고 있어요...</span>
+        <span>{t('auth.logging_in')}</span>
       </div>
       <DialogModalOneButton
         title={'오류'}

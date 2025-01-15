@@ -6,8 +6,10 @@ import DialogModalTwoButton from '@/app/_components/modalTwoButton';
 import { Block, DeleteBlockByIdDto, GetBlockListReqDto, GetBlockListResDto } from '@/app/_dto/blocking/blocking.dto';
 import { onApiError } from '@/utils/api-error/onApiError';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function BlockList() {
+  const { t } = useTranslation();
   const [untilId, setUntilId] = useState<string | null>(null);
   const [blockList, setBlockList] = useState<Block[]>([]);
   const [unblockId, setUnblockId] = useState<string | null>(null);
@@ -51,7 +53,7 @@ export default function BlockList() {
         return blocklist;
       } else {
         onApiError(res.status, res);
-        throw new Error('차단 리스트를 불러오는데 에러가 발생했어요!');
+        throw new Error(t('error.failed_to_load_blocklist'));
       }
     } catch (err) {
       throw err;

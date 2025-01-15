@@ -45,10 +45,10 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
         if (websocketRef.current === null || websocketRef.current?.readyState === 3) {
           if (ws_retry_counter.current < 5) {
             ws_retry_counter.current += 1;
-            console.log('웹소켓 연결 재시도...', ws_retry_counter.current);
+            console.log(t('websocket.retry_connect'), ws_retry_counter.current);
             webSocketManager({ websocketRef, toastTimeout, setWsState, setQuestionsToastMenu });
           } else {
-            console.log('웹소켓 연결 최대 재시도 횟수를 초과했어요!');
+            console.log(t('websocket.max_retries_exceeded'));
             clearInterval(webSocketRetryInterval);
             return;
           }
@@ -157,7 +157,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
                 </Link>
               </li>
               <li>
-                <Link href={'/main/social'}>소셜(베타)</Link>
+                <Link href={'/main/social'}>{t('header.social_beta')}</Link>
               </li>
               <li>
                 <Link href={'/main/settings'}>설정</Link>
@@ -188,8 +188,8 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
           >
             <FaInfoCircle size={20} />
             <div className="">
-              <h3 className="text-lg">새 질문이 있어요!</h3>
-              <span className="text-sm font-thin">여기를 눌러 확인하기</span>
+              <h3 className="text-lg">{t('header.new_questions')}</h3>
+              <span className="text-sm font-thin">{t('header.click_to_check')}</span>
             </div>
           </Link>
           <FaXmark className="absolute top-7 right-8 cursor-pointer" onClick={() => setQuestionsToastMenu(false)} />

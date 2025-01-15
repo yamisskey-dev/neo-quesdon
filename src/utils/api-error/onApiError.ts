@@ -1,7 +1,9 @@
 import { ApiErrorResponseDto } from '@/app/_dto/api-error/api-error.dto';
 import { ApiErrorEv, ApiErrorEventValues } from '@/app/main/_events';
+import { useTranslation } from 'react-i18next';
 
 export async function onApiError(code: number, res: Response) {
+  const { t } = useTranslation();
   const errorRes = (await res.json()) as ApiErrorResponseDto;
   const modalValue: ApiErrorEventValues = {
     title: '오류',
@@ -77,8 +79,11 @@ export async function onApiError(code: number, res: Response) {
       modalValue.body = '마스토돈/미스키 서버에서 API토큰 인증이 해제 되었어요!';
       break;
     default:
-      modalValue.title = '알 수 없는 오류';
-      modalValue.body = `알 수 없는 오류가 발생했어요! ${errorRes.error_type}, ${errorRes.message}`;
+      modalValue.title = t('error.unknown');
+      modalValue.body = t('error.unknown_occurred', {
+        error_type: errorRes.error_type,
+        message: errorRes.message
+      });
   }
   ApiErrorEv.SendApiErrorEvent(modalValue);
 }
