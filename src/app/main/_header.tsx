@@ -89,7 +89,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
           Neo-Quesdon
         </Link>
       </div>
-      <div className="mr-2 tooltip tooltip-bottom" data-tip="스트리밍 연결상태">
+      <div className="mr-2 tooltip tooltip-bottom" data-tip={t('header.streaming_staus')}>
         <WebSocketState connection={wsState} />
       </div>
       <div className="dropdown dropdown-end">
@@ -130,7 +130,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
               onClick={menuClose}
             >
               <li>
-                <Link href={`/main/user/${profile?.handle}`}>마이페이지</Link>
+                <Link href={`/main/user/${profile?.handle}`}>{t('header.profile')}</Link>
               </li>
               <li className="flex">
                 <Link href={'/main/questions'}>
@@ -157,23 +157,23 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
                 </Link>
               </li>
               <li>
-                <Link href={'/main/social'}>{t('header.social_beta')}</Link>
+                <Link href={'/main/social'}>{t('header.social')}</Link>
               </li>
               <li>
-                <Link href={'/main/settings'}>설정</Link>
+                <Link href={'/main/settings'}>{t('header.settings')}</Link>
               </li>
               <li onClick={() => logoutModalRef.current?.showModal()}>
-                <a>로그아웃</a>
+                <a>{t('header.logout.title')}</a>
               </li>
             </ul>
           </div>
         )}
       </div>
       <DialogModalTwoButton
-        title={'로그아웃'}
-        body={'정말로 로그아웃 하시겠어요?'}
-        confirmButtonText={'로그아웃'}
-        cancelButtonText={'취소'}
+        title={t('header.logout.title')}
+        body={t('header.logout.body')}
+        confirmButtonText={t('header.logout.confirm')}
+        cancelButtonText={t('header.logout.cancel')}
         ref={logoutModalRef}
         onClick={logout}
       />

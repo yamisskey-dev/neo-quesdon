@@ -92,10 +92,12 @@
     "word_mute": "질문 단어 뮤트",
     "word_mute_description": "뮤트할 단어를 한줄에 하나씩 입력합니다.",
     "regex_support": "정규식 문법도 지원합니다",
-    "import_blocks": "차단 목록 가져오기",
+    "import_blocks_text": "차단 목록 가져오기",
     "import_blocks_description": "차단 목록을 내 연합우주 계정에서 가져오는 기능이에요. 차단된 사용자는 나에게 더 이상 질문을 보낼 수 없어요. 사용자를 차단하면 서로의 답변이 숨겨져요.",
+    "import_blocks_btn": "차단 목록 가져오기",
     "delete_account": "계정 삭제",
     "delete_account_description": "네오 퀘스돈에서 이 계정을 삭제해요. 이 계정으로 했던 모든 활동은 지워져요.",
+    "delete_account_btn": "계정 삭제",
     "word_mute_placeholder": "뮤트할 단어, 또는 정규식",
     "stop_notification_dm": "새 질문 DM으로 받지 않기",
     "stop_post_answer": "내 답변을 올리지 않기", 
@@ -159,11 +161,20 @@
     }
   },
   "header": {
+    "streaming_staus": "스트리밍 연결상태",
     "login": "로그인",
     "mypage": "마이페이지",
     "unanswered": "미답변 질문",
     "notification": "알림",
-    "social_beta": "소셜(베타)",
+    "profile": "프로필",
+    "social": "소셜(베타)",
+    "settings": "설정",
+    "logout": {
+      "title": "로그아웃", 
+      "body": "정말로 로그아웃 하시겠어요?",
+      "confirm": "로그아웃",
+      "cancel": "취소"
+    },
     "new_questions": "새 질문이 있어요!",
     "click_to_check": "여기를 눌러 확인하기"
   },

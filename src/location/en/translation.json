@@ -91,7 +91,7 @@
       "word_mute": "Mute question words",
       "word_mute_description": "Enter one word to mute per line.",
       "regex_support": "Also supports regular expressions",
-      "import_blocks": "Import block list",
+      "import_blocks_text": "Import block list",
       "import_blocks_description": "A feature to import a block list from your own federated account. Users who are blocked cannot send me any more questions. When you block a user, both answers are hidden from each other.",
       "delete_account": "Delete account",
       "delete_account_description": "If you delete your account, all data will be deleted and cannot be restored. Please be careful.",
@@ -155,7 +155,15 @@
       "mypage": "mypage",
       "unanswered": "unanswered",
       "notification": "notification",
-      "social_beta": "social(beta)",
+      "profile": "profile",
+      "social": "social(beta)",
+      "settings": "settings",
+      "logout": {
+        "title": "Logout", 
+        "body": "Are you sure you want to log out?",
+        "confirm": "confirm",
+        "cancel": "cancel"
+      },
       "new_questions": "new questions",
       "click_to_check": "click here to check"
     },

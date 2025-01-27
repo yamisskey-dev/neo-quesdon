@@ -92,7 +92,7 @@
     "word_mute": "質問ワードミュート",
     "word_mute_description": "ミュートするワードを一行に一つずつ入力します。",
     "regex_support": "正規表現もサポートしています",
-    "import_blocks": "ブロックリストを取り込む",
+    "import_blocks_text": "ブロックリストを取り込む",
     "import_blocks_description": "ブロックリストを自分の連合宇宙アカウントから取り込む機能です。ブロックされたユーザーは私にもう質問を送ることができません。ユーザーをブロックするとお互いの回答が隠されます。",
     "delete_account": "アカウント削除",
     "delete_account_description": "ネオクエスドンからこのアカウントを削除します。このアカウントで行ったすべての活動が削除されます。",
@@ -163,7 +163,15 @@
     "mypage": "マイページ",
     "unanswered": "未回答の質問",
     "notification": "通知",
-    "social_beta": "ソーシャル(β)",
+    "profile": "プロフィール",
+    "social": "ソーシャル(β)",
+    "settings": "設定",
+    "logout": {
+      "title": "ログアウト", 
+      "body": "本当にログアウトしますか？",
+      "confirm": "確認",
+      "cancel": "キャンセル"
+    },
     "new_questions": "新着質問",
     "click_to_check": "ここをクリックして確認"
   },

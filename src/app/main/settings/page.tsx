@@ -236,10 +236,9 @@ export default function Settings() {
                   </div>
                 </div>
                 <div className="desktop:ml-2 flex flex-col items-center desktop:items-start">
-                  <span className="text-xl font-thin">{t('settings.hello')},</span>
+                  <span className="text-xl font-thin">{t('settings.hello')}</span>
                   <div className="flex text-2xl items-center">
                     <NameComponents username={userInfo?.name} width={24} height={24} />
-                    <span>님!</span>
                   </div>
                 </div>
               </div>
@@ -382,7 +381,7 @@ export default function Settings() {
                           <Divider />
                           <div className="font-normal text-xl py-3 flex items-center gap-2">
                             <FaUserLargeSlash />
-                            {t('settings.import_blocks')}
+                            {t('settings.import_blocks_text')}
                           </div>
                           <div className="font-thin px-4 py-2 break-keep">
                             {t('settings.import_blocks_description')}
@@ -394,7 +393,7 @@ export default function Settings() {
                             }}
                             className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-warning'}`}
                           >
-                            {buttonClicked ? t('settings.please_wait') : '차단 목록 가져오기'}
+                            {buttonClicked ? t('settings.please_wait') : t('settings.import_blocks_btn')}
                           </button>
                           <Divider />
                           <div className="font-normal text-xl py-3 flex items-center gap-2">
@@ -429,7 +428,7 @@ export default function Settings() {
                             }}
                             className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-error'}`}
                           >
-                            {buttonClicked ? t('settings.please_wait') : '계정 삭제'}
+                            {buttonClicked ? t('settings.please_wait') : t('settings.delete_account_btn')}
                           </button>
                         </div>
                       </CollapseMenu>
