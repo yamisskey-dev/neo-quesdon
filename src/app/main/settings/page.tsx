@@ -236,7 +236,6 @@ export default function Settings() {
                   </div>
                 </div>
                 <div className="desktop:ml-2 flex flex-col items-center desktop:items-start">
-                  <span className="text-xl font-thin">{t('settings.hello')}</span>
                   <div className="flex text-2xl items-center">
                     <NameComponents username={userInfo?.name} width={24} height={24} />
                   </div>
@@ -250,7 +249,7 @@ export default function Settings() {
                 <div className="w-full window:w-[70%] flex flex-col desktop:w-full gap-2 desktop:grid desktop:grid-cols-2">
                   {userInfo && (
                     <>
-                      <CollapseMenu id={'basicSetting'} text="preferences">
+                      <CollapseMenu id={'basicSetting'} text={t('settings.preferences')}>
                         <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col items-center">
                           <div className="grid grid-cols-[20%_80%] desktop:w-[24rem] desktop:grid-cols-[7rem_100%] gap-2 items-center p-2">
                             <input {...register('stopNewQuestion')} type="checkbox" className="toggle toggle-success" />

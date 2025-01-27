@@ -83,8 +83,8 @@
       "dialog_two_buttons_2_cancelButtonText": "cancel"
     },
     "settings": {
-      "hello:": "hello",
-      "window": "Our secret",
+      "preferences": "Preferences",
+      "window": "Our secret window",
       "stop": "Stop receiving questions",
       "refuse": "Stop receiving anonymous questions",
       "inbox_name_limit": "Question box name (within 10 characters)",
@@ -93,8 +93,10 @@
       "regex_support": "Also supports regular expressions",
       "import_blocks_text": "Import block list",
       "import_blocks_description": "A feature to import a block list from your own federated account. Users who are blocked cannot send me any more questions. When you block a user, both answers are hidden from each other.",
+      "import_blocks_btn": "Import block list",
       "delete_account": "Delete account",
       "delete_account_description": "If you delete your account, all data will be deleted and cannot be restored. Please be careful.",
+      "delete_account_btn": "Delete account",
       "word_mute_placeholder": "Mute words or regular expressions",
       "stop_notification_dm": "Stop new question DM notifications",
       "stop_post_answer": "Do not post answers", 
@@ -151,6 +153,7 @@
       }
     },
     "header": {
+      "streaming_staus": "Streaming status",
       "login": "login",
       "mypage": "mypage",
       "unanswered": "unanswered",

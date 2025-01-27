@@ -84,7 +84,7 @@
     "dialog_two_buttons_2_cancelButtonText": "취소"
   },
   "settings": {
-    "hello:": "안녕하세요",
+    "preferences": "환경설정",
     "window": "우리만의 비밀설정창",
     "stop": "더 이상 질문을 받지 않기",
     "refuse": "익명 질문을 받지 않기",
