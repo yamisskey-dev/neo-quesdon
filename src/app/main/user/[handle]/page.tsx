@@ -1,15 +1,12 @@
 import UserPage from '@/app/main/user/[handle]/_answers';
 import Profile from '@/app/main/user/[handle]/_profile';
-import josa from '@/app/api/_utils/josa';
 import { Metadata } from 'next';
 import { GetPrismaClient } from '@/app/api/_utils/getPrismaClient/get-prisma-client';
 import { notFound } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }): Promise<Metadata> {
-  const { t } = useTranslation();
   const { handle } = await params;
   const profileHandle = decodeURIComponent(handle);
   const prisma = GetPrismaClient.getClient();
@@ -18,21 +15,22 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
       handle: profileHandle,
     },
   });
+
   if (!userProfile) {
     return {
-      title: t('user.meta.notFound.title'),
-      description: t('user.meta.notFound.description'),
+      title: 'User Not Found',
+      description: 'The requested user could not be found',
     };
   }
 
   const username = userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1] || '';
 
   return {
-    title: t('user.meta.profile.title', { username, boxname: userProfile.questionBoxName }),
+    title: `${username}'s ${userProfile.questionBoxName}`,
     openGraph: {
-      title: t('user.meta.profile.title', { username, boxname: userProfile.questionBoxName }),
-      description: t('user.meta.profile.description', { username, boxname: userProfile.questionBoxName }),
-      images: userProfile.avatarUrl,
+      title: `${username}'s ${userProfile.questionBoxName}`,
+      description: `${username}'s Question Box`,
+      images: userProfile.avatarUrl ? [userProfile.avatarUrl] : [],
     },
   };
 }
