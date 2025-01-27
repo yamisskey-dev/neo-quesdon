@@ -16,7 +16,9 @@
     "title": "Neo-Quesdon",
     "subtitle": "Misskey / CherryPick / Mastodon 에서 사용할 수 있는 새로운 Quesdon",
     "login": "로그인",
-    "timeline": "로그인 없이 즐기기"
+    "timeline": "로그인 없이 즐기기",
+    "valid_url": "올바른 URL을 입력해주세요",
+    "enter_url": "URL을 입력해주세요"
   },
   "main": {
     "answers": "최근 올라온 답변들",
@@ -38,7 +40,12 @@
     "header:": "답변",
     "anonymous": "익명의 질문자",
     "begin": "🥂 끝이야 한 잔 해",
-    "end": "🍺 질문함이 맥주있어요..."
+    "end": "🍺 질문함이 맥주있어요...",
+    "check_nsfw": "답변자가 NSFW로 체크한 질문이에요!",
+    "view_question": "질문 보기"
+  },
+  "notification": {
+    "new_questions": "개의 새로운 알림"
   },
   "question": {
     "submit:": "질문",
@@ -47,7 +54,34 @@
     "delete": "삭제",
     "block": "질문자 차단",
     "mark_as_nsfw": "NSFW로 체크",
-    "show_question": "질문 보기"
+    "show_question": "질문 보기",
+    "enter_answer": "답변을 입력하세요...",
+    "check_nsfw" : "NSFW로 체크",
+    "hidden_recently": "최근 올라온 답변'에서 답변이 숨겨져요.",
+    "hide_from": "메인에서 숨기기",
+    "scope_for": "답변 노트를 올릴 범위",
+    "scope_public": "공개",
+    "scope_home": "홈",
+    "scope_followers": "팔로워"
+  },
+  "questions": {
+    "unanswered": "미답변 질문들",
+    "no_unanswered": "👍 답변하지 않은 질문이 없어요!",
+    "not_logged_in" : "로그인이 안 되어있어요!",
+    "dialog_one_button_title_loading": "보내는 중",
+    "dialog_one_button_title_done": "답변완료",
+    "dialog_one_button_body_loading": "답변을 보내고 있어요...",
+    "dialog_one_button_body_done": "답변했어요!",
+    "dialog_one_button_loadingButtonText": "로딩중...",
+    "dialog_one_button_doneButtonText": "확인",
+    "dialog_two_buttons_1_title": "질문 지우기",
+    "dialog_two_buttons_1_body": "질문을 지울까요...?",
+    "dialog_two_buttons_1_confirmButtonText": "확인",
+    "dialog_two_buttons_1_cancelButtonText": "취소",
+    "dialog_two_buttons_2_title": "질문자 차단",
+    "dialog_two_buttons_2_body": "정말 질문자를 차단할까요? 차단된 질문자는 더 이상 나에게 질문을 할 수 없어요!",
+    "dialog_two_buttons_2_confirmButtonText": "확인",
+    "dialog_two_buttons_2_cancelButtonText": "취소"
   },
   "settings": {
     "hello:": "안녕하세요",
@@ -62,7 +96,67 @@
     "import_blocks_description": "차단 목록을 내 연합우주 계정에서 가져오는 기능이에요. 차단된 사용자는 나에게 더 이상 질문을 보낼 수 없어요. 사용자를 차단하면 서로의 답변이 숨겨져요.",
     "delete_account": "계정 삭제",
     "delete_account_description": "네오 퀘스돈에서 이 계정을 삭제해요. 이 계정으로 했던 모든 활동은 지워져요.",
-    "word_mute_placeholder": "뮤트할 단어, 또는 정규식"
+    "word_mute_placeholder": "뮤트할 단어, 또는 정규식",
+    "stop_notification_dm": "새 질문 DM으로 받지 않기",
+    "stop_post_answer": "내 답변을 올리지 않기", 
+    "answer_visibility": "답변을 올릴 때 기본 공개 범위",
+    "visibility": {
+      "public": "공개",
+      "home": "홈", 
+      "followers": "팔로워"
+    },
+    "questionbox": "질문함",
+    "security": "보안",
+    "dangerous": "위험한 설정",
+    "logout_all_devices": "모든 기기에서 로그아웃 하기",
+    "logout_all": "모든 기기에서 로그아웃",
+    "clear_notifications": "알림함 비우기",
+    "clear_notifications_warning": "알림함의 모든 알림을 지워요. 지워진 알림은 되돌릴 수 없으니 주의하세요.",
+    "clear_notifications_btn": "알림함 비우기",
+    "clear_questions": "미답변 질문 비우기",
+    "clear_questions_warning": "아직 답변하지 않은 모든 질문들을 지워요. 지워진 질문은 되돌릴 수 없으니 주의하세요.",
+    "clear_questions_btn": "모든 질문을 삭제", 
+    "clean_account": "계정 청소하기",
+    "clean_account_warning": "네오 퀘스돈에서 이 계정으로 지금까지 작성한 모든 답변을 지워요. 이 작업은 시간이 걸리고, 지워진 글은 되돌릴 수 없으니 주의하세요.",
+    "clean_account_btn": "모든 답변을 삭제",
+    "please_wait": "잠깐만요...",
+    "blocklist": {
+      "view": "차단한 사용자 보기",
+      "user_handle": "유저 핸들",
+      "unblock": "차단 해제",
+      "empty": "차단한 유저가 없어요!",
+      "end": "끝!"
+    }
+  },
+  "social": {
+    "my_friends": "내 친구들",
+    "empty": "팔로잉한 유저가 없어요!"
+  },
+  "user": {
+    "profile": {
+      "notFound": {
+        "title": "찾을 수 없음",
+        "description": "그런 유저를 찾을 수 없습니다",
+        "message": "그런 사용자는 없어요!"
+      },
+      "title": "{username} 님의 {boxname}",
+      "description": "{username} 님의 {boxname}이에요!",
+      "error": {
+        "title": "에러",
+        "send_failed": "질문을 보내는데 실패했어요! {{error}"
+      },
+      "answer": {
+        "notFound": {
+          "message": "답변을 찾을 수 없어요!"
+        },
+        "delete": {
+          "title": "답변 지우기",
+          "body": "답변을 지울까요...?",
+          "confirm": "확인",
+          "cancel": "취소"
+        }
+      }
+    }
   },
   "header": {
     "login": "로그인",
@@ -99,9 +193,58 @@
     "block_confirmation": "정말 차단하시겠어요...?\n차단 이후에는 서로의 답변이 숨겨지고 차단한 사람이 나에게 질문을 할 수 없게 되어요.",
     "blocking": "차단하는 중...",
     "blocked": "차단되었어요!",
-    "unblock": "차단 해제",
     "unblock_confirmation": "차단 해제하시겠어요?",
     "unblocking": "차단 해제하는 중...",
-    "unblocked": "차단 해제되었어요!"
+    "unblocked": "차단 해제되었어요!",
+    "clear_notifications": {
+      "title": "주의",
+      "body": "알림함을 비울까요?",
+      "confirm": "네",
+      "cancel": "아니오"
+    },
+    "clear_questions": {
+      "title": "주의", 
+      "body": "아직 답변하지 않은 질문들을 모두 지울까요? \n이 작업은 시간이 걸리고, 지워진 질문은 복구할 수 없어요!",
+      "confirm": "네",
+      "cancel": "아니오"
+    },
+    "import_blocks": {
+      "title": "주의",
+      "body": "{{instance}} 에서 차단 목록을 가져올까요? \n 이 작업은 완료되는데 시간이 조금 걸려요!",
+      "confirm": "네", 
+      "cancel": "아니오"
+    },
+    "clean_account": {
+      "title": "경고",
+      "body": "그동안 썼던 모든 답변을 지울까요? \n이 작업은 시간이 걸리고, 지워진 답변은 복구할 수 없어요!",
+      "confirm": "네",
+      "cancel": "아니오"
+    },
+    "delete_account": {
+      "title": "경고", 
+      "body": "정말 계정을 삭제할까요...? \n 이 계정의 모든 정보가 지워져요!",
+      "confirm": "네",
+      "cancel": "아니오"
+    },
+    "unblock": {
+      "loading": {
+        "title": "차단 해제",
+        "body": "차단 해제하는 중..."
+      },
+      "done": {
+        "title": "완료", 
+        "body": "차단 해제되었어요!"
+      },
+      "error": {
+        "title": "오류",
+        "body": "차단 해제중 오류가 발생했어요! {{message}}"
+      },
+      "confirm": {
+        "title": "차단 해제",
+        "body": "차단 해제하시겠어요?",
+        "yes": "확인",
+        "no": "취소"
+      }
+    }
   }
 }

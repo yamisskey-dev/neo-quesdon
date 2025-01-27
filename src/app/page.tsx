@@ -189,11 +189,11 @@ export default function Home() {
             {errors.address && errors.address.type === 'pattern' && (
               <div
                 className="tooltip tooltip-open tooltip-error transition-opacity"
-                data-tip="올바른 URL을 입력해주세요"
+                data-tip={t('home.valid_url')}
               />
             )}
             {errors.address && errors.address.message === 'required' && (
-              <div className="tooltip tooltip-open tooltip-error transition-opacity" data-tip="URL을 입력해주세요" />
+              <div className="tooltip tooltip-open tooltip-error transition-opacity" data-tip={t('home.enter_url')} />
             )}
             <input
               id="serverNameInput"

@@ -199,7 +199,7 @@ export default function Question({
               className={`textarea textarea-sm text-sm h-24 desktop:h-32 window:text-xl desktop:text-2xl bg-transparent placeholder-neutral-300 text-slate-50 ${
                 errors.answer && 'textarea-error'
               }`}
-              placeholder="답변을 입력하세요..."
+              placeholder={t('question.enter_answer')}
               onKeyDown={onCtrlEnter}
             />
 
@@ -213,26 +213,26 @@ export default function Question({
                       onClick={() => setValue('nsfw', !nsfwedAnswer)}
                     />
                     <input type="hidden" {...register('nsfw')} />
-                    <span className="w-full text-sm desktop:text-md">NSFW로 체크</span>
+                    <span className="w-full text-sm desktop:text-md">{t('question.check_nsfw')}</span>
                   </div>
-                  <div className="flex items-center gap-2 tooltip" data-tip="'최근 올라온 답변'에서 답변이 숨겨져요.">
+                  <div className="flex items-center gap-2 tooltip" data-tip={t('question.hidden_recently')}>
                     <input
                       type="checkbox"
                       className="toggle toggle-accent toggle-sm"
                       onClick={() => setValue('hideFromMain', !hideFromMain)}
                     />
                     <input type="hidden" {...register('hideFromMain')} />
-                    <span className="w-full text-sm desktop:text-md break-keep">메인에서 숨기기</span>
+                    <span className="w-full text-sm desktop:text-md break-keep">{t('question.hide_from')}</span>
                   </div>
                 </div>
-                <div className="tooltip" data-tip="답변 노트를 올릴 범위">
+                <div className="tooltip" data-tip={t('question.scope_for')}>
                   <select {...register('visibility')} className="select select-ghost select-sm dark:shadow tooltip">
                     <option className={'hidden'} value={undefined}>
                       ...
                     </option>
-                    <option value="public">공개</option>
-                    <option value="home">홈</option>
-                    <option value="followers">팔로워</option>
+                    <option value="public">{t('question.scope_public')}</option>
+                    <option value="home">{t('question.scope_home')}</option>
+                    <option value="followers">{t('question.scope_followers')}</option>
                   </select>
                 </div>
               </div>

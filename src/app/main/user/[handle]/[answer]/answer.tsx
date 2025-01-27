@@ -6,8 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import { AnswerWithProfileDto } from '@/app/_dto/answers/Answers.dto';
 import DialogModalTwoButton from '@/app/_components/modalTwoButton';
 import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 export default function SingleAnswer({ answerBody }: { answerBody: AnswerWithProfileDto }) {
+  const { t } = useTranslation();
   const [answerBodyState, setAnswerBodyState] = useState<AnswerWithProfileDto | undefined>();
   const singleQuestionDeleteModalRef = useRef<HTMLDialogElement>(null);
   const { userHandle } = useParams() as { userHandle: string };
@@ -33,10 +35,10 @@ export default function SingleAnswer({ answerBody }: { answerBody: AnswerWithPro
         <>
           <Answer value={answerBody} id={answerBody.id} ref={singleQuestionDeleteModalRef} />
           <DialogModalTwoButton
-            title={'답변 지우기'}
-            body={'답변을 지울까요...?'}
-            confirmButtonText={'확인'}
-            cancelButtonText={'취소'}
+            title={t('user.answer.delete.title')}
+            body={t('user.answer.delete.body')}
+            confirmButtonText={t('user.answer.delete.confirm')}
+            cancelButtonText={t('user.answer.delete.cancel')}
             ref={singleQuestionDeleteModalRef}
             onClick={() => handleDeleteAnswer(answerBody.id)}
           />

@@ -16,8 +16,8 @@ export default function BlockList() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [mounted, setMounted] = useState<HTMLTableRowElement | null>(null);
   const [loadingDoneModalText, setLoadingDoneModalText] = useState<{ title: string; body: string }>({
-    title: '완료',
-    body: '차단 해제되었어요!',
+    title: t('modal.unblock.done.title'),
+    body: t('modal.unblock.done.body'),
   });
   const unblockConfirmModalRef = useRef<HTMLDialogElement>(null);
   const unblockSuccessModalRef = useRef<HTMLDialogElement>(null);
@@ -33,8 +33,8 @@ export default function BlockList() {
     if (!res.ok) {
       setIsLoading(false);
       setLoadingDoneModalText({
-        title: '오류',
-        body: `차단 해제중 오류가 발생했어요! ${await res.text()}`,
+        title: t('modal.unblock.error.title'),
+        body: t('modal.unblock.error.body', {message: await res.text()}),
       });
       return;
     }
@@ -84,11 +84,11 @@ export default function BlockList() {
 
   return (
     <>
-      <CollapseMenu id={'blockList'} text="차단한 사용자 보기">
+      <CollapseMenu id={'blockList'} text={t('settings.blocklist.view')}>
         <table className="table">
           <thead>
             <tr>
-              <th className="text-sm dark:text-white">유저 핸들</th>
+              <th className="text-sm dark:text-white">{t('settings.blocklist.user_handle')}</th>
             </tr>
           </thead>
           <tbody>
@@ -103,7 +103,7 @@ export default function BlockList() {
                       unblockConfirmModalRef.current?.showModal();
                     }}
                   >
-                    차단 해제
+                    {t('settings.blocklist.unblock')}
                   </button>
                 </td>
               </tr>
@@ -116,17 +116,13 @@ export default function BlockList() {
               ) : (
                 <>
                   {blockList.length === 0 ? (
-                    <>
-                      <td>
-                        <span className="text-lg">차단한 유저가 없어요!</span>
-                      </td>
-                    </>
+                    <td>
+                      <span className="text-lg">{t('settings.blocklist.empty')}</span>
+                    </td>
                   ) : (
-                    <>
-                      <td>
-                        <span className="text-lg">끝!</span>
-                      </td>
-                    </>
+                    <td>
+                      <span className="text-lg">{t('settings.blocklist.end')}</span>
+                    </td>
                   )}
                 </>
               )}
@@ -135,21 +131,21 @@ export default function BlockList() {
         </table>
       </CollapseMenu>
       <DialogModalTwoButton
-        title={'차단 해제'}
-        body={'차단 해제하시겠어요?'}
-        confirmButtonText={'확인'}
+        title={t('modal.unblock.confirm.title')}
+        body={t('modal.unblock.confirm.body')}
+        confirmButtonText={t('modal.unblock.confirm.yes')}
         onClick={() => doUnBlock(unblockId!)}
-        cancelButtonText={'취소'}
+        cancelButtonText={t('modal.unblock.confirm.no')}
         ref={unblockConfirmModalRef}
       />
       <DialogModalLoadingOneButton
         isLoading={isLoading}
-        title_loading={'차단 해제'}
+        title_loading={t('modal.unblock.loading.title')}
         title_done={loadingDoneModalText.title}
-        body_loading={'차단 해제하는 중...'}
+        body_loading={t('modal.unblock.loading.body')}
         body_done={loadingDoneModalText.body}
-        loadingButtonText={'로딩중'}
-        doneButtonText={'닫기'}
+        loadingButtonText={t('common.loading')}
+        doneButtonText={t('common.close')}
         ref={unblockSuccessModalRef}
       />
     </>

@@ -176,7 +176,10 @@ export default function Profile() {
         setIsLoading(false);
       } else {
         setIsLoading(false);
-        setQuestionSendingDoneMessage({ title: '에러', body: `질문을 보내는데 실패했어요! ${await res.text()}` });
+        setQuestionSendingDoneMessage({ 
+          title: t('user.profile.error.title'), 
+          body: t('user.profile.error.send_failed', { error: await res.text() })
+        });
       }
     }
     // 작성자 비공개

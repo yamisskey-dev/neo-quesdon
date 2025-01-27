@@ -3,10 +3,221 @@
       "login": "login",
       "logout": "logout", 
       "settings": "settings",
-      "save": "save"
+      "save": "save",
+      "success": "success",
+      "error": "error",
+      "please_wait": "please wait...",
+      "loading": "loading",
+      "close": "close",
+      "confirm": "confirm",
+      "cancel": "cancel"
+    },
+    "home": {
+      "title": "Neo-Quesdon",
+      "subtitle": "A new Quesdon that can be used in Misskey / CherryPick / Mastodon",
+      "login": "login",
+      "timeline": "peek without login",
+      "valid_url": "Please enter a valid URL",
+      "enter_url": "Please enter a URL"
+    },
+    "main": {
+      "answers": "Recent answers",
+      "nothing": "No answers",
+      "done": "All answers are done"
+    },
+    "profile": {
+      "inbox": "question box!",
+      "none": "is not receiving questions right now...",
+      "placeholder": "Please enter the question content",
+      "author": "author disclosure",
+      "submit": "ask",
+      "share": "Share the question box page",
+      "question_sent": "Asked!",
+      "question_send_failed": "Failed to send the question! {{error}}",
+      "only_public_questions": "Only accepts author disclosure questions!"
+    },
+    "answer": {
+      "header:": "answer",
+      "anonymous": "anonymous questioner",
+      "begin": "There is a beer in the question box🍺...",
+      "end": "It's over, let's have a drink.",
+      "check_nsfw": "This is a question that the answerer checked as NSFW!",
+      "view_question": "View question"
+    },
+    "notification": {
+      "new_questions": "new questions"
+    },
+    "question": {
+      "submit:": "answer",
+      "anonymous": "anonymous questioner",
+      "nocomment": "Don't you say anything in the answer...?",
+      "delete": "delete",
+      "block": "block the questioner",
+      "mark_as_nsfw": "Check as NSFW",
+      "show_question": "View question",
+      "enter_answer": "Please enter the answer...",
+      "hidden_recently": "The answer is hidden in 'Recent answers'.",
+      "hide_from": "Hide from main",
+      "scope_for": "Scope for raising answer notes",
+      "scope_public": "public",
+      "scope_home": "home",
+      "scope_followers": "followers"
+    },
+    "questions": {
+      "unanswered": "unanswered questions",
+      "no_unanswered": "There are no unanswered questions",
+      "not_logged_in" : "You need to log in to see unanswered questions",
+      "dialog_one_button_title_loading": "Sending",
+      "dialog_one_button_title_done": "Sent",
+      "dialog_one_button_body_loading": "Sending...",
+      "dialog_one_button_body_done": "Answer sent!",
+      "dialog_one_button_loadingButtonText": "Sending...",
+      "dialog_one_button_doneButtonText": "Done",
+      "dialog_two_buttons_1_title": "Delete question",
+      "dialog_two_buttons_1_body": "Do you really want to delete the question?",
+      "dialog_two_buttons_1_confirmButtonText": "confirm",
+      "dialog_two_buttons_1_cancelButtonText": "cancel",
+      "dialog_two_buttons_2_title": "Block questioner",
+      "dialog_two_buttons_2_body": "Do you want to block the questioner?",
+      "dialog_two_buttons_2_confirmButtonText": "confirm",
+      "dialog_two_buttons_2_cancelButtonText": "cancel"
+    },
+    "settings": {
+      "hello:": "hello",
+      "window": "Our secret",
+      "stop": "Stop receiving questions",
+      "refuse": "Stop receiving anonymous questions",
+      "inbox_name_limit": "Question box name (within 10 characters)",
+      "word_mute": "Mute question words",
+      "word_mute_description": "Enter one word to mute per line.",
+      "regex_support": "Also supports regular expressions",
+      "import_blocks": "Import block list",
+      "import_blocks_description": "A feature to import a block list from your own federated account. Users who are blocked cannot send me any more questions. When you block a user, both answers are hidden from each other.",
+      "delete_account": "Delete account",
+      "delete_account_description": "If you delete your account, all data will be deleted and cannot be restored. Please be careful.",
+      "word_mute_placeholder": "Mute words or regular expressions",
+      "stop_notification_dm": "Stop new question DM notifications",
+      "stop_post_answer": "Do not post answers", 
+      "answer_visibility": "Default visibility when posting answers",
+      "visibility": {
+        "public": "public",
+        "home": "home", 
+        "followers": "followers"
+      },
+      "questionbox": "Question box",
+      "security": "Security",
+      "dangerous": "Dangerous settings",
+      "logout_all_devices": "Log out of all devices",
+      "logout_all": "Log out of all devices",
+      "clear_notifications": "Clear notifications",
+      "clear_notifications_warning": "Clear all notifications in the notification box. Please note that deleted notifications cannot be restored!",
+      "clear_notifications_btn": "Clear notifications",
+      "clear_questions": "Clear all questions",
+      "clear_questions_warning": "Do you want to delete all unanswered questions? \nThis operation takes time and deleted questions cannot be restored!",
+      "clear_questions_btn": "Clear all questions", 
+      "clean_account": "Clean up account",
+      "clean_account_warning": "Do you really want to clean up your account? \nThis operation takes time and deleted posts cannot be restored!",
+      "clean_account_btn": "Clean up account",
+      "please_wait": "Please wait..."
+    },
+    "social": {
+      "my_friends": "My friends",
+      "empty": "No friends"
+    },
+    "user": {
+      "profile": {
+        "notFound": {
+          "title": "User not found",
+          "description": "There is no such user!",
+          "message": "User does not exist"
+        },
+        "title": "{username}'s question box",
+        "description": "Ask a question to {username}!",
+        "error": {
+          "title": "Failed to load user",
+          "send_failed": "Failed to send the question! {{error}}"
+        }
+      },
+      "answer": {
+        "notFound": {
+          "message": "There is no such answer!"
+        },
+        "delete": {
+          "title": "Delete answer",
+          "body": "Do you really want to delete the answer?",
+          "confirm": "confirm",
+          "cancel": "cancel"
+        }
+      }
+    },
+    "header": {
+      "login": "login",
+      "mypage": "mypage",
+      "unanswered": "unanswered",
+      "notification": "notification",
+      "social_beta": "social(beta)",
+      "new_questions": "new questions",
+      "click_to_check": "click here to check"
     },
     "error": {
-      "user_not_exist": "user not exitst",
-      "bad_request": "bad request"
+      "user_not_exist": "User does not exist",
+      "bad_request": "Bad request",
+      "login_failed": "Login failed",
+      "failed_to_load_blocklist": "Failed to load block list",
+      "unknown": "An unknown error occurred!",
+      "unknown_occurred": "An unknown error occurred! {{error_type}}, {{message}}",
+      "login_required_for_public_question": "You need to log in to make author disclosure!",
+      "question_send_failed": "Failed to send the question! {{error}}",
+      "anonymous_questions_not_accepted": "Not accepting anonymous questions...",
+      "empty_question": "Do you want to send an empty question...?"
+    },
+    "auth": {
+      "logging_in": "Logging in..."
+    },
+    "modal": {
+      "warning": "Warning",
+      "confirm_logout_all": "Are you sure you want to log out of all devices?",
+      "yes": "yes",
+      "no": "no",
+      "sending": "sending",
+      "sending_question": "Sending question",
+      "block": "block",
+      "block_confirmation": "Are you sure you want to block?",
+      "blocking": "Blocking...",
+      "blocked": "Blocked!",
+      "unblock": "unblock",
+      "unblock_confirmation": "Are you sure you want to unblock?",
+      "unblocking": "Unblocking...",
+      "unblocked": "Unblocked!",
+      "clear_notifications": {
+        "title": "Warning",
+        "body": "Do you want to clear all notifications? \nPlease note that deleted notifications cannot be restored!",
+        "confirm": "yes",
+        "cancel": "no"
+      },
+      "clear_questions": {
+        "title": "Warning", 
+        "body": "Do you want to delete all unanswered questions? \nThis operation takes time and deleted questions cannot be restored!",
+        "confirm": "yes",
+        "cancel": "no"
+      },
+      "import_blocks": {
+        "title": "Warning",
+        "body": "Do you want to import the block list?",
+        "confirm": "yes", 
+        "cancel": "no"
+      },
+      "clean_account": {
+        "title": "Warning",
+        "body": "Do you really want to clean up your account? \nThis operation takes time and deleted posts cannot be restored!",
+        "confirm": "yes",
+        "cancel": "no"
+      },
+      "delete_account": {
+        "title": "Warning", 
+        "body": "Do you want to delete your account? \nThis operation takes time and deleted accounts cannot be restored!",
+        "confirm": "yes",
+        "cancel": "no"
+      }
     }
   }

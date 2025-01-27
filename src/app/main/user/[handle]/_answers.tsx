@@ -166,7 +166,7 @@ export default function UserPage() {
           {answers !== null ? (
             <div className="w-full">
               <div className="flex items-center gap-2 my-2 text-2xl">
-                <span>답변</span>
+                <span>{t('answer.header')}</span>
                 <span className="badge badge-ghost">{count}</span>
               </div>
               {answers.length > 0 ? (
@@ -202,9 +202,9 @@ export default function UserPage() {
         </div>
       )}
       <DialogModalTwoButton
-        title={'답변 지우기'}
-        body={'답변을 지울까요...?'}
-        confirmButtonText={'확인'}
+        title={t('answer.anonymous')}
+        body={t('answer.check_nsfw')}
+        confirmButtonText={t('answer.view_question')}
         cancelButtonText={'취소'}
         ref={answerDeleteModalRef}
         onClick={() => handleDeleteAnswer(id)}

@@ -4,10 +4,12 @@ import josa from '@/app/api/_utils/josa';
 import { Metadata } from 'next';
 import { GetPrismaClient } from '@/app/api/_utils/getPrismaClient/get-prisma-client';
 import { notFound } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }): Promise<Metadata> {
+  const { t } = useTranslation();
   const { handle } = await params;
   const profileHandle = decodeURIComponent(handle);
   const prisma = GetPrismaClient.getClient();
@@ -18,16 +20,18 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   });
   if (!userProfile) {
     return {
-      title: '찾을 수 없음',
-      description: '그런 유저를 찾을 수 없습니다',
+      title: t('user.meta.notFound.title'),
+      description: t('user.meta.notFound.description'),
     };
   }
 
+  const username = userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1] || '';
+
   return {
-    title: `${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${userProfile.questionBoxName}`,
+    title: t('user.meta.profile.title', { username, boxname: userProfile.questionBoxName }),
     openGraph: {
-      title: `${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${userProfile.questionBoxName}`,
-      description: `${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${josa(userProfile.questionBoxName, '이에요!', '예요!')}`,
+      title: t('user.meta.profile.title', { username, boxname: userProfile.questionBoxName }),
+      description: t('user.meta.profile.description', { username, boxname: userProfile.questionBoxName }),
       images: userProfile.avatarUrl,
     },
   };

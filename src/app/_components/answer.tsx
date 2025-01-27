@@ -49,9 +49,9 @@ export default function Answer({ value, idState, ref }: askProps) {
     <div className="w-full glass rounded-box px-2 desktop:px-8 py-4 mb-2 shadow">
       {!showNsfw && value.nsfwedAnswer && (
         <div className="fixed top-0 left-0 z-10 gap-2 w-full h-full flex flex-col justify-center items-center">
-          <span>답변자가 NSFW로 체크한 질문이에요!</span>
+          <span>{t('answer.check_nsfw')}</span>
           <button className="btn" onClick={() => setShowNsfw(!showNsfw)}>
-            질문 보기
+          {t('answer.view_question')}
           </button>
         </div>
       )}
