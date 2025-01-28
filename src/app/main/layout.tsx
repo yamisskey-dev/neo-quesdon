@@ -201,7 +201,7 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
             <header className="w-full h-full flex justify-center">
               <Header questionsNum={questionsNum} loginChecked={loginChecked} />
             </header>
-            <main className="pt-16">
+            <main className="w-full flex justify-center">
               {children}
             </main>
           </NotificationContext.Provider>
