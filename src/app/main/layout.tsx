@@ -1,8 +1,7 @@
 'use client';
 
 import { userProfileMeDto } from '@/app/_dto/fetch-profile/Profile.dto';
-import MainHeader from '@/app/main/_header';
-import { createContext, useEffect, useRef, useState } from 'react';
+import { createContext, useEffect, useRef, useState, Suspense } from 'react';
 import { AnswerWithProfileDto } from '../_dto/answers/Answers.dto';
 import { AnswerEv, ApiErrorEv, ApiErrorEventValues, MyProfileEv, NotificationEv } from './_events';
 import { NotificationDto, NotificationPayloadTypes } from '../_dto/notification/notification.dto';
@@ -15,6 +14,8 @@ import { fetchAllAnswers } from '@/utils/answers/fetchAllAnswers';
 import { fetchNoti } from '@/utils/notification/fetchNoti';
 import { refreshJwt } from '@/utils/refreshJwt/refresh-jwt-token';
 import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
+import Header from './_header';
 
 type MainPageContextType = {
   answers: AnswerWithProfileDto[] | null;
@@ -41,6 +42,7 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
     errorType: 'SERVER_ERROR',
   });
   const onApiErrorModalClose = useRef<undefined | (() => void)>(undefined);
+  const { t } = useTranslation();
 
   // ------------ Initial Fetch -----------------------------
   useEffect(() => {
@@ -191,15 +193,17 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
   };
 
   return (
-    <div>
+    <Suspense fallback={<div className="loading">{t('common.loading')}</div>}>
       <MyProfileContext.Provider value={userProfileData}>
         <AnswersContext.Provider value={{ answers, loading, untilId }}>
           <NotificationContext.Provider value={noti}>
             {modal}
             <header className="w-full h-full flex justify-center">
-              <MainHeader questionsNum={questionsNum} loginChecked={loginChecked} />
+              <Header questionsNum={questionsNum} loginChecked={loginChecked} />
             </header>
-            <main className="flex justify-center">{children}</main>
+            <main className="pt-16">
+              {children}
+            </main>
           </NotificationContext.Provider>
         </AnswersContext.Provider>
       </MyProfileContext.Provider>
@@ -210,6 +214,6 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
         ref={apiErrorModalRef}
         onClick={onApiErrorModalClose.current}
       />
-    </div>
+    </Suspense>
   );
 }

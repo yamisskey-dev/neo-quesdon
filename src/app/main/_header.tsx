@@ -40,26 +40,42 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
     if (!loginChecked) {
       return;
     }
-    const webSocketRetryInterval = setInterval(
-      () => {
-        if (websocketRef.current === null || websocketRef.current?.readyState === 3) {
-          if (ws_retry_counter.current < 5) {
-            ws_retry_counter.current += 1;
-            console.log(t('websocket.retry_connect'), ws_retry_counter.current);
-            webSocketManager({ websocketRef, toastTimeout, setWsState, setQuestionsToastMenu });
-          } else {
-            console.log(t('websocket.max_retries_exceeded'));
-            clearInterval(webSocketRetryInterval);
-            return;
-          }
-        } else {
-          websocketRef.current.send(`mua: ${Date.now()}`);
-        }
-      },
-      5000 + ws_retry_counter.current * 2000,
-    );
 
-    webSocketManager({ websocketRef, toastTimeout, setWsState, setQuestionsToastMenu });
+    // 指数バックオフではなく固定の短い間隔で再試行
+    const RETRY_INTERVAL = 1000; // 1秒間隔に短縮
+    const MAX_RETRIES = 10; // 再試行回数を増やす
+
+    const webSocketRetryInterval = setInterval(() => {
+      if (websocketRef.current === null || websocketRef.current?.readyState === 3) {
+        if (ws_retry_counter.current < MAX_RETRIES) {
+          ws_retry_counter.current += 1;
+          console.log(t('websocket.retry_connect'), ws_retry_counter.current);
+          // 即時再接続を試みる
+          webSocketManager({ 
+            websocketRef, 
+            toastTimeout, 
+            setWsState, 
+            setQuestionsToastMenu 
+          });
+        } else {
+          console.log(t('websocket.max_retries_exceeded'));
+          clearInterval(webSocketRetryInterval);
+          return;
+        }
+      } else {
+        // キープアライブメッセージを短い間隔で送信
+        websocketRef.current.send(`ping: ${Date.now()}`);
+      }
+    }, RETRY_INTERVAL);
+
+    // 初回接続
+    webSocketManager({ 
+      websocketRef, 
+      toastTimeout, 
+      setWsState, 
+      setQuestionsToastMenu 
+    });
+
     return () => {
       clearTimeout(toastTimeout.current);
       clearInterval(webSocketRetryInterval);
