@@ -42,7 +42,8 @@
     "begin": "🥂 全ての回答が完了しました",
     "end": "🍺 もう質問箱は空っぽです...",
     "check_nsfw": "回答者がNSFWとしてマークした質問です！",
-    "view_question": "質問を見る"
+    "view_question": "質問を見る",
+    "delete": "削除"
   },
   "notification": {
     "new_questions": "件の新着質問"

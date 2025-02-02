@@ -26,9 +26,9 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   const username = userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1] || '';
 
   return {
-    title: `${username}'s ${userProfile.questionBoxName}`,
+    title: `${userProfile.questionBoxName}`,
     openGraph: {
-      title: `${username}'s ${userProfile.questionBoxName}`,
+      title: `${userProfile.questionBoxName}`,
       description: `${username}'s Question Box`,
       images: userProfile.avatarUrl ? [userProfile.avatarUrl] : [],
     },

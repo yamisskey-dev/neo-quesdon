@@ -8,6 +8,7 @@ import { userProfileDto } from '../_dto/fetch-profile/Profile.dto';
 import { useParams } from 'next/navigation';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
 import { useTranslation } from 'react-i18next';
+import { getI18nLocale } from '@/app/i18n/locale';
 
 interface askProps {
   value: AnswerWithProfileDto;
@@ -29,7 +30,7 @@ export async function fetchProfile(value: AnswerWithProfileDto) {
 }
 
 export default function Answer({ value, idState, ref }: askProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { handle } = useParams() as { handle: string };
   const [showNsfw, setShowNsfw] = useState(false);
   const [userInfo, setUserInfo] = useState<userProfileDto>();
@@ -81,7 +82,7 @@ export default function Answer({ value, idState, ref }: askProps) {
                   }
                 }}
               >
-                삭제
+                {t('answer.delete')}
               </a>
             </div>
           )}
@@ -104,7 +105,7 @@ export default function Answer({ value, idState, ref }: askProps) {
           </div>
           <div className="chat-footer font-thin text-xs mt-2 underline text-blue-900 dark:text-slate-100">
             <Link href={`/main/user/${value.answeredPersonHandle}/${value.id}`}>
-              {new Date(value.answeredAt).toLocaleString('ko-kr', { hour12: false })}
+              {new Date(value.answeredAt).toLocaleString(getI18nLocale(i18n), { hour12: false })}
             </Link>
           </div>
         </div>

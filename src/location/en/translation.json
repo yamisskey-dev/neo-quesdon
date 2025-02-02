@@ -42,7 +42,8 @@
       "begin": "There is a beer in the question box🍺...",
       "end": "It's over, let's have a drink.",
       "check_nsfw": "This is a question that the answerer checked as NSFW!",
-      "view_question": "View question"
+      "view_question": "View question",
+      "delete": "delete"
     },
     "notification": {
       "new_questions": "new questions"

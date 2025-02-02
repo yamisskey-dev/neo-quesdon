@@ -42,7 +42,8 @@
     "begin": "🥂 끝이야 한 잔 해",
     "end": "🍺 질문함이 맥주있어요...",
     "check_nsfw": "답변자가 NSFW로 체크한 질문이에요!",
-    "view_question": "질문 보기"
+    "view_question": "질문 보기",
+    "delete": "삭제"
   },
   "notification": {
     "new_questions": "개의 새로운 알림"

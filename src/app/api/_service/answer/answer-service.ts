@@ -102,16 +102,16 @@ export class AnswerService {
       let title;
       let text;
       if (data.nsfwedAnswer === true) {
-        title = `⚠️ 이 질문은 NSFW한 질문이에요! `;
+        title = `⚠️ This question is NSFW!`;
         if (createdAnswer.questioner) {
-          text = `질문자:${createdAnswer.questioner}\nQ:${createdAnswer.question}\nA: ${createdAnswer.answer}\n`;
+          text = `Questioner:${createdAnswer.questioner}\nQ:${createdAnswer.question}\nA: ${createdAnswer.answer}\n`;
         } else {
           text = `Q: ${createdAnswer.question}\nA: ${createdAnswer.answer}\n`;
         }
       } else {
         title = `Q: ${createdAnswer.question} `;
         if (createdAnswer.questioner) {
-          text = `질문자:${createdAnswer.questioner}\nA: ${createdAnswer.answer}\n `;
+          text = `Questioner:${createdAnswer.questioner}\nA: ${createdAnswer.answer}\n `;
         } else {
           text = `A: ${createdAnswer.answer}\n`;
         }
