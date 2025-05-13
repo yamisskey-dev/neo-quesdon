@@ -49,7 +49,7 @@
     "new_questions": "件の新着質問"
   },
   "question": {
-    "submit": "質問する",
+    "submit": "回答する",
     "anonymous": "匿名質問者",
     "nocomment": "回答にコメントがありません...？",
     "delete": "削除",
