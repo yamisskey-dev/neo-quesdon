@@ -3,6 +3,7 @@ import Profile from '@/app/main/user/[handle]/_profile';
 import { Metadata } from 'next';
 import { GetPrismaClient } from '@/app/api/_utils/getPrismaClient/get-prisma-client';
 import { notFound } from 'next/navigation';
+import { josa } from 'josa';
 
 export const dynamic = 'force-dynamic';
 

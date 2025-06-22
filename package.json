@@ -33,6 +33,7 @@
     "ioredis": "^5.4.1",
     "ip-address": "^10.0.1",
     "ip-cidr": "^3.1.0",
+    "josa": "^3.0.1",
     "jose": "^5.9.6",
     "module-alias": "^2.2.3",
     "negotiator": "^1.0.0",
