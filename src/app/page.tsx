@@ -95,48 +95,53 @@ export default function Home() {
     setValue: setFormValue,
   } = useForm<FormValue>({ defaultValues: { address: '' } });
 
-  const onSubmit: SubmitHandler<FormValue> = async (data, event) => {
-    try {
-      setIsLoading(true);
-      const submitter = (event?.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
+  const onSubmit: SubmitHandler<FormValue> = async (e) => {
+    setIsLoading(true);
+    const host = convertHost(e.address);
 
-      if (submitter.name === 'timeline') {
-        await logout();
-        router.push('/main');
-        return;
-      }
-  
-      // Login process
-      const host = convertHost(data.address);
-      localStorage.setItem('server', host);
-      
-      const type = await detectInstance(host);
-      const payload: loginReqDto = { host };
-  
-      let redirectUrl: string;
-      switch (type) {
-        case 'misskey':
-        case 'cherrypick': {
-          const response = await misskeyAuth(payload);
-          redirectUrl = response.url;
-          break;
+    localStorage.setItem('server', host);
+    await detectInstance(host)
+      .then((type) => {
+        const payload: loginReqDto = {
+          host: host,
+        };
+        switch (type) {
+          case 'misskey':
+          case 'cherrypick':
+          case 'iceshrimp':
+          case 'sharkey':
+            misskeyAuth(payload)
+              .then((r) => {
+                router.replace(r.url);
+              })
+              .catch((err) => {
+                setErrorMessage(err);
+                errModalRef.current?.showModal();
+              });
+            break;
+          case 'Iceshrimp.NET':
+          case 'mastodon':
+            mastodonAuth(payload)
+              .then((r) => {
+                router.replace(r);
+              })
+              .catch((err) => {
+                setErrorMessage(err);
+                errModalRef.current?.showModal();
+              });
+            break;
+          default:
+            setErrorMessage(`알 수 없는 인스턴스 타입 '${type}' 이에요!`);
+            errModalRef.current?.showModal();
         }
-        case 'mastodon': {
-          redirectUrl = await mastodonAuth(payload);
-          break;
-        }
-        default:
-          throw new Error(`Unknown instance type: ${type}`);
-      }
-  
-      router.push(redirectUrl);
-  
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : 'Unknown error');
-      errModalRef.current?.showModal();
-    } finally {
-      setIsLoading(false);
-    }
+      })
+      .catch(() => {
+        setErrorMessage('인스턴스 타입 감지에 실패했어요!');
+        errModalRef.current?.showModal();
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {

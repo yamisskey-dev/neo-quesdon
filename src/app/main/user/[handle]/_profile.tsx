@@ -14,6 +14,7 @@ import { FaEllipsisVertical } from 'react-icons/fa6';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
 import { onApiError } from '@/utils/api-error/onApiError';
 import { useTranslation } from 'react-i18next';
+import { FaInfoCircle } from 'react-icons/fa';
 
 type FormValue = {
   question: string;
@@ -296,18 +297,24 @@ export default function Profile() {
           )}
           <div className="flex items-center text-xl mb-2">
             {userProfile && userProfile.stopNewQuestion ? (
-              <div className="flex flex-col items-center desktop:flex-row">
+              <div className="flex flex-col items-center">
                 <NameComponents username={userProfile.name} width={32} height={32} />
                 <span>{t('profile.none')}</span>
               </div>
             ) : (
-              <div className="flex flex-col items-center desktop:flex-row window:flex-row window:text-2xl">
+              <div className="flex flex-col items-center window:text-2xl">
                 <NameComponents username={userProfile?.name} width={32} height={32} />
                 <span>{t('profile.inbox')}</span>
               </div>
             )}
           </div>
         </div>
+        {userProfile?.announcement && (
+          <div className="mb-2 p-2 w-[90%] flex items-center gap-2 border border-indigo-400 dark:border-indigo-200 rounded-lg">
+            <FaInfoCircle className='flex-shrink-0' />
+            <span className='grow break-all'>{userProfile.announcement}</span>
+          </div>
+        )}
         <form className="w-full flex flex-col items-center" onSubmit={handleSubmit(onSubmit)}>
           <textarea
             {...register('question', {
@@ -315,9 +322,8 @@ export default function Profile() {
               maxLength: 1000,
             })}
             placeholder={t('profile.placeholder')}
-            className={`w-[90%] mb-2 font-thin leading-loose textarea ${
-              errors.question ? 'textarea-error' : 'textarea-bordered'
-            }`}
+            className={`w-[90%] mb-2 font-thin leading-loose textarea ${errors.question ? 'textarea-error' : 'textarea-bordered'
+              }`}
             onKeyDown={onCtrlEnter}
             disabled={userProfile?.stopNewQuestion === true ? true : false}
             style={{ resize: 'none' }}

@@ -24,9 +24,11 @@ export type FormValue = {
   stopNewQuestion: boolean;
   stopNotiNewQuestion: boolean;
   stopPostAnswer: boolean;
+  defaultHideFromTimeline: boolean;
   questionBoxName: string;
   visibility: $Enums.PostVisibility;
   wordMuteList: string;
+  announcement: string;
 };
 async function updateUserSettings(value: FormValue) {
   const body: UserSettingsUpdateDto = {
@@ -34,6 +36,7 @@ async function updateUserSettings(value: FormValue) {
     stopNewQuestion: value.stopNewQuestion,
     stopNotiNewQuestion: value.stopNotiNewQuestion,
     stopPostAnswer: value.stopPostAnswer,
+    defaultHideFromTimeline: value.defaultHideFromTimeline,
     questionBoxName: value.questionBoxName || '질문함',
     defaultPostVisibility: value.visibility,
     wordMuteList: value.wordMuteList
@@ -41,14 +44,13 @@ async function updateUserSettings(value: FormValue) {
       .map((v) => v.trim())
       .filter((v) => v.length > 0)
       .map((word) => word.replace(/^\/|\/[igmsuy]{0,6}$/g, '')),
+    announcement: value.announcement,
   };
   try {
     const res = await fetch('/api/user/settings', {
       method: 'POST',
       body: JSON.stringify(body),
-      headers: {
-        'Content-type': 'application/json',
-      },
+      headers: { 'Content-type': 'application/json' },
     });
     if (!res.ok) {
       onApiError(res.status, res);
@@ -81,9 +83,7 @@ export default function Settings() {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<FormValue>({
-    values: defaultFormValue,
-  });
+  } = useForm<FormValue>({ values: defaultFormValue });
 
   const formValues = watch();
   useEffect(() => {
@@ -93,9 +93,11 @@ export default function Settings() {
         stopNewQuestion: userInfo.stopNewQuestion,
         stopNotiNewQuestion: userInfo.stopNotiNewQuestion,
         stopPostAnswer: userInfo.stopPostAnswer,
+        defaultHideFromTimeline: userInfo.defaultHideFromTimeline,
         questionBoxName: userInfo.questionBoxName,
         visibility: userInfo.defaultPostVisibility,
         wordMuteList: userInfo.wordMuteList.join('\n'),
+        announcement: userInfo.announcement,
       };
       setDefaultFormValue(value);
     }
@@ -132,9 +134,7 @@ export default function Settings() {
     if (!user_handle) {
       return;
     }
-    const req: AccountCleanReqDto = {
-      handle: user_handle,
-    };
+    const req: AccountCleanReqDto = { handle: user_handle };
     const res = await fetch('/api/user/account-clean', {
       method: 'POST',
       body: JSON.stringify(req),
@@ -159,13 +159,8 @@ export default function Settings() {
     if (!user_handle) {
       return;
     }
-    const req: AccountDeleteReqDto = {
-      handle: user_handle,
-    };
-    const res = await fetch('/api/user/account-delete', {
-      method: 'POST',
-      body: JSON.stringify(req),
-    });
+    const req: AccountDeleteReqDto = { handle: user_handle };
+    const res = await fetch('/api/user/account-delete', { method: 'POST', body: JSON.stringify(req) });
     if (res.ok) {
       localStorage.removeItem('user_handle');
       localStorage.removeItem('last_token_refresh');
@@ -178,9 +173,7 @@ export default function Settings() {
 
   const onImportBlock = async () => {
     setButtonClicked(true);
-    const res = await fetch('/api/user/blocking/import', {
-      method: 'POST',
-    });
+    const res = await fetch('/api/user/blocking/import', { method: 'POST' });
     if (res.ok) {
       console.log('블락 리스트 가져오기 시작됨...');
     } else {
@@ -193,9 +186,7 @@ export default function Settings() {
 
   const onDeleteAllQuestions = async () => {
     setButtonClicked(true);
-    const res = await fetch('/api/db/questions', {
-      method: 'DELETE',
-    });
+    const res = await fetch('/api/db/questions', { method: 'DELETE' });
     setButtonClicked(false);
     if (!res.ok) {
       throw new Error('질문을 모두 삭제하는데 실패했어요!');
@@ -204,9 +195,7 @@ export default function Settings() {
 
   const onDeleteAllNotifications = async () => {
     setButtonClicked(true);
-    const res = await fetch('/api/user/notification', {
-      method: 'DELETE',
-    });
+    const res = await fetch('/api/user/notification', { method: 'DELETE' });
     setButtonClicked(false);
     if (!res.ok) {
       throw new Error('알림을 삭제하는데 실패했어요!');
@@ -273,35 +262,58 @@ export default function Settings() {
 
                             <input {...register('stopPostAnswer')} type="checkbox" className="toggle toggle-success" />
                             <span className="font-thin">{t('settings.stop_post_answer')}</span>
+                            <div
+                              className="tooltip tooltip-right flex justify-self-start before:max-w-[14rem] before:break-keep"
+                              data-tip="나의 답변을 네오퀘스돈 메인화면에서 숨길 수 있어요."
+                            >
+                              <input
+                                {...register('defaultHideFromTimeline')}
+                                type="checkbox"
+                                className="toggle toggle-success"
+                              />
+                            </div>
+                            <span className="font-thin">내 답변을 메인화면에서 숨기기</span>
 
                             <div className="w-fit col-span-2 desktop:grid desktop:grid-cols-subgrid flex flex-col-reverse justify-center desktop:items-center gap-2 ml-[calc(20%+8px)] desktop:ml-0">
-                              <select
-                                {...register('visibility')}
-                                className="select select-ghost select-sm w-fit"
-                                disabled={formValues.stopPostAnswer}
+                              <div
+                                className="tooltip tooltip-top desktop:tooltip-right w-fit justify-self-start flex before:max-w-[12rem] break-keep"
+                                data-tip="연합우주 계정에 답변을 올릴 때의 공개 범위를 설정해요."
                               >
-                                <option value="public">{t('settings.visibility.public')}</option>
-                                <option value="home">{t('settings.visibility.home')}</option>
-                                <option value="followers">{t('settings.visibility.followers')}</option>
-                              </select>
+                                <select
+                                  {...register('visibility')}
+                                  className="select select-ghost select-sm w-fit"
+                                  disabled={formValues.stopPostAnswer}
+                                >
+                                  <option value="public">{t('settings.visibility.public')}</option>
+                                  <option value="home">{t('settings.visibility.home')}</option>
+                                  <option value="followers">{t('settings.visibility.followers')}</option>
+                                </select>
+                              </div>
                               <span className="font-thin">{t('settings.answer_visibility')}</span>
                             </div>
 
                             <div className="col-start-2 flex flex-col-reverse gap-2">
                               <input
-                                {...register('questionBoxName', {
-                                  maxLength: 10,
-                                })} 
+                                {...register('questionBoxName', { maxLength: 10 })}
                                 type="text"
                                 placeholder={t('settings.questionbox')}
-                                className={`input input-bordered input-sm w-48 ${
-                                  errors.questionBoxName?.type === 'maxLength' && 'input-error'
-                                }`}
+                                className={`input input-bordered input-sm w-48 ${errors.questionBoxName?.type === 'maxLength' && 'input-error'
+                                  }`}
                               />
                               <span className="font-thin">{t('settings.inbox_name_limit')}</span>
                             </div>
                           </div>
                           <Divider />
+                          <div className='flex flex-col desktop:w-[24rem] gap-2 items-center p-2'>
+                            <h3 className='text-lg'>질문함 공지</h3>
+                            <span className='font-thin'>질문함에 올릴 공지를 입력합니다.</span>
+                            <textarea
+                              {...register("announcement")}
+                              className='textarea textarea-bordered w-full min-h-[15vh] text-base'
+                              placeholder='최대 80자'
+                              maxLength={80}
+                            />
+                          </div>
                           <div className="flex flex-col desktop:w-[24rem] gap-2 items-center p-2">
                             <div className="text-lg">{t('settings.word_mute')}</div>
                             <div className="font-thin">
