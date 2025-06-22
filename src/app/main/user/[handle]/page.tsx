@@ -3,7 +3,6 @@ import Profile from '@/app/main/user/[handle]/_profile';
 import { Metadata } from 'next';
 import { GetPrismaClient } from '@/app/api/_utils/getPrismaClient/get-prisma-client';
 import { notFound } from 'next/navigation';
-import { josa } from 'josa';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,10 +26,10 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   const username = userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1] || '';
 
   return {
-    title: `@${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${userProfile.questionBoxName}`,
+    title: `@${username}'s ${userProfile.questionBoxName}`,
     openGraph: {
-      title: `@${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${userProfile.questionBoxName}`,
-      description: `@${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${josa(userProfile.questionBoxName, '이에요!', '예요!')}`,
+      title: `@${username}'s ${userProfile.questionBoxName}`,
+      description: `@${username}'s ${userProfile.questionBoxName}`,
       images: userProfile.avatarUrl,
     },
   };
