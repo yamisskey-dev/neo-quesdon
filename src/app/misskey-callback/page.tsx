@@ -8,8 +8,9 @@ import { MiUser as MiUser } from '@/api/_misskey-entities/user';
 import { misskeyCallbackTokenClaimPayload } from '@/app/_dto/misskey-callback/callback-token-claim.dto';
 import { misskeyUserInfoPayload } from '@/app/_dto/misskey-callback/user-info.dto';
 import DialogModalOneButton from '@/app/_components/modalOneButton';
+import { useTranslation } from 'react-i18next';
 
-const onErrorModalClick = () => {
+const onErrorModalClose = () => {
   window.location.replace('/');
 };
 export default function CallbackPage() {
@@ -18,6 +19,7 @@ export default function CallbackPage() {
   const [errMessage, setErrorMessage] = useState<string>();
 
   const router = useRouter();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const server = localStorage.getItem('server');
@@ -70,14 +72,14 @@ export default function CallbackPage() {
     <>
       <div className="w-full h-[100vh] flex flex-col gap-2 justify-center items-center text-3xl">
         <Image src={`/static/loading/${id}.gif`} width={64} height={64} alt="Login Loading" unoptimized />
-        <span>로그인하고 있어요...</span>
+        <span>{t('login.loading')}</span>
       </div>
       <DialogModalOneButton
         title={'오류'}
         body={`${errMessage}`}
         buttonText={'확인'}
         ref={errModalRef}
-        onClick={onErrorModalClick}
+        onClose={onErrorModalClose}
       />
     </>
   );

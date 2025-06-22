@@ -9,6 +9,8 @@ import { FetchUserAnswersDto } from '@/app/_dto/answers/fetch-user-answers.dto';
 import DialogModalTwoButton from '@/app/_components/modalTwoButton';
 import { AnswerDeletedEvPayload } from '@/app/_dto/websocket-event/websocket-event.dto';
 import { AnswerEv } from '@/app/main/_events';
+import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 type ResponseType = {
   answers: AnswerDto[];
@@ -21,15 +23,16 @@ async function fetchProfile(handle: string) {
     if (profile.ok) {
       return profile.json() as unknown as userProfileDto;
     } else {
-      throw new Error(`프로필이 없습니다! ${await profile.text()}`);
+      onApiError(profile.status, profile);
+      return undefined;
     }
-  } catch (err) {
-    alert(err);
+  } catch {
     return undefined;
   }
 }
 
 export default function UserPage() {
+  const { t } = useTranslation();
   const { handle } = useParams() as { handle: string };
   const profileHandle = decodeURIComponent(handle);
 
@@ -52,14 +55,10 @@ export default function UserPage() {
     const res = await fetch(`/api/db/answers/${handle}?${params}`, {
       method: 'GET',
     });
-    try {
-      if (res.ok) {
-        return res.json();
-      } else {
-        throw new Error(`fetch-user-answers fail! ${res.status}, ${await res.text()}`);
-      }
-    } catch (err) {
-      alert(err);
+    if (res.ok) {
+      return res.json();
+    } else {
+      onApiError(res.status, res);
       return { answers: [], count: 0 };
     }
   };
@@ -69,7 +68,7 @@ export default function UserPage() {
       method: 'DELETE',
     });
     if (!res.ok) {
-      alert(`답변을 삭제하는데 실패하였습니다! ${await res.text()}`);
+      onApiError(res.status, res);
       return;
     }
     if (answers && count) {
@@ -167,7 +166,7 @@ export default function UserPage() {
           {answers !== null ? (
             <div className="w-full">
               <div className="flex items-center gap-2 my-2 text-2xl">
-                <span>답변</span>
+                <span>{t('answer.header')}</span>
                 <span className="badge badge-ghost">{count}</span>
               </div>
               {answers.length > 0 ? (
@@ -184,14 +183,14 @@ export default function UserPage() {
                       </div>
                     ) : (
                       <div>
-                        <span className="text-3xl">🥂 끝이야 한 잔 해</span>
+                        <span className="text-3xl">{t('answer.begin')}</span>
                       </div>
                     )}
                   </div>
                 </div>
               ) : (
                 <div className="text-2xl flex gap-2 justify-center items-center border shadow rounded-box p-2 glass">
-                  <span>🍺 질문함이 맥주있어요...</span>
+                  <span>{t('answer.end')}</span>
                 </div>
               )}
             </div>
@@ -203,9 +202,9 @@ export default function UserPage() {
         </div>
       )}
       <DialogModalTwoButton
-        title={'답변 지우기'}
-        body={'답변을 지울까요...?'}
-        confirmButtonText={'확인'}
+        title={t('answer.anonymous')}
+        body={t('answer.check_nsfw')}
+        confirmButtonText={t('answer.view_question')}
         cancelButtonText={'취소'}
         ref={answerDeleteModalRef}
         onClick={() => handleDeleteAnswer(id)}

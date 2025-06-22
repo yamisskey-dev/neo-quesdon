@@ -9,7 +9,10 @@ import { MyQuestionEv } from '../_events';
 import { Logger } from '@/utils/logger/Logger';
 import { QuestionDeletedPayload } from '@/app/_dto/websocket-event/websocket-event.dto';
 import { MyProfileContext } from '@/app/main/layout';
-import { createBlockByQuestionDto } from '@/app/_dto/blocking/blocking.dto';
+import { deleteQuestion } from '@/utils/questions/deleteQuestion';
+import { createBlock } from '@/utils/block/createBlock';
+import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 const fetchQuestions = async (): Promise<questionDto[] | null> => {
   const res = await fetch('/api/db/questions');
@@ -18,40 +21,18 @@ const fetchQuestions = async (): Promise<questionDto[] | null> => {
     if (res.status === 401) {
       return null;
     } else if (!res.ok) {
-      throw new Error(`내 질문을 불러오는데 실패했어요!: ${await res.text()}`);
+      onApiError(res.status, res);
+      return null;
     } else {
       return await res.json();
     }
-  } catch (err) {
-    alert(err);
+  } catch {
     return null;
   }
 };
 
-async function deleteQuestion(id: number) {
-  const res = await fetch(`/api/db/questions/${id}`, {
-    method: 'DELETE',
-    cache: 'no-cache',
-  });
-  if (!res.ok) {
-    throw new Error(`질문을 삭제하는데 실패했어요! ${await res.text()}`);
-  }
-}
-async function createBlock(id: number) {
-  const body: createBlockByQuestionDto = {
-    questionId: id,
-  };
-  const res = await fetch(`/api/user/blocking/create-by-question`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    throw new Error(`차단에 실패했어요! ${await res.text()}`);
-  }
-}
-
 export default function Questions() {
+  const { t } = useTranslation();
   const [questions, setQuestions] = useState<questionDto[] | null>();
   const profile = useContext(MyProfileContext);
   const [id, setId] = useState<number>(0);
@@ -87,7 +68,7 @@ export default function Questions() {
 
   return (
     <div className="w-[90%] window:w-[80%] desktop:w-[70%] flex flex-col justify-center">
-      <h3 className="text-3xl desktop:text-4xl mb-2">미답변 질문들</h3>
+      <h3 className="text-3xl desktop:text-4xl mb-2">{t('questions.unanswered')}</h3>
       {questions === undefined ? (
         <div className="w-full flex justify-center">
           <span className="loading loading-spinner loading-lg" />
@@ -116,46 +97,45 @@ export default function Questions() {
                 </div>
               ) : (
                 <div className="h-fit p-4 glass rounded-box flex flex-col items-center shadow mb-2">
-                  <h1 className="text-xl desktop:text-3xl">👍 답변하지 않은 질문이 없어요!</h1>
+                  <h1 className="text-xl desktop:text-3xl">{t('questions.no_unanswered')}</h1>
                 </div>
               )}
             </div>
           ) : (
             <div className="w-full flex justify-center">
-              <span className="text-2xl">로그인이 안 되어있어요!</span>
+              <span className="text-2xl">{t('questions.not_logged_in')}</span>
             </div>
           )}
         </div>
       )}
       <DialogModalLoadingOneButton
         isLoading={isLoading}
-        title_loading={'보내는 중'}
-        title_done={'답변완료'}
-        body_loading={'답변을 보내고 있어요...'}
-        body_done={'답변했어요!'}
-        loadingButtonText={'로딩중...'}
-        doneButtonText={'확인'}
+        title_loading={t('questions.dialog_one_button_title_loading')}
+        title_done={t('questions.dialog_one_button_title_done')}
+        body_loading={t('questions.dialog_one_button_body_loading')}
+        body_done={t('questions.dialog_one_button_body_done')}
+        loadingButtonText={t('questions.dialog_one_button_loadingButtonText')}
+        doneButtonText={t('questions.dialog_one_button_doneButtonText')}
         ref={answeredQuestionModalRef}
       />
       <DialogModalTwoButton
-        title={'질문 지우기'}
-        body={'질문을 지울까요...?'}
-        confirmButtonText={'확인'}
-        cancelButtonText={'취소'}
+        title={t('questions.dialog_two_buttons_1_title')}
+        body={t('questions.dialog_two_buttons_1_body')}
+        confirmButtonText={t('questions.dialog_two_buttons_1_confirmButtonText')}
+        cancelButtonText={t('questions.dialog_two_buttons_1_cancelButtonText')}
         ref={deleteQuestionModalRef}
         onClick={() => {
-          deleteQuestion(id);
-          setQuestions((prevQuestions) => (prevQuestions ? [...prevQuestions.filter((prev) => prev.id !== id)] : null));
+          deleteQuestion(id, onApiError);
         }}
       />
       <DialogModalTwoButton
-        title={'질문자 차단'}
-        body={'정말 질문자를 차단할까요? 차단된 질문자는 더 이상 나에게 질문을 할 수 없어요!'}
-        confirmButtonText={'확인'}
-        cancelButtonText={'취소'}
+        title={t('questions.dialog_two_buttons_2_title')}
+        body={t('questions.dialog_two_buttons_2_body')}
+        confirmButtonText={t('questions.dialog_two_buttons_2_confirmButtonText')}
+        cancelButtonText={t('questions.dialog_two_buttons_2_cancelButtonText')}
         ref={createBlockModalRef}
         onClick={() => {
-          createBlock(id);
+          createBlock(id, onApiError);
         }}
       />
     </div>

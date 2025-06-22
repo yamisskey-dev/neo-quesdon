@@ -6,13 +6,14 @@ import NameComponents from '@/app/_components/NameComponents';
 import { SearchBlockListResDto } from '@/app/_dto/blocking/blocking.dto';
 import { CreateQuestionDto } from '@/app/_dto/questions/create-question.dto';
 import { userProfileDto } from '@/app/_dto/fetch-profile/Profile.dto';
-import josa from '@/app/api/_utils/josa';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FaEllipsisVertical } from 'react-icons/fa6';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
+import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 type FormValue = {
   question: string;
@@ -21,19 +22,16 @@ type FormValue = {
 
 async function fetchProfile(handle: string) {
   const res = await fetch(`/api/db/fetch-profile/${handle}`);
-  try {
-    if (res && res.ok) {
-      return res.json() as unknown as userProfileDto;
-    } else {
-      throw new Error(`프로필을 불러오는데 실패했습니다! ${await res.text()}`);
-    }
-  } catch (err) {
-    alert(err);
+  if (res.ok) {
+    return res.json() as unknown as userProfileDto;
+  } else {
+    onApiError(res.status, res);
     return undefined;
   }
 }
 
 export default function Profile() {
+  const { t } = useTranslation();
   const { handle } = useParams() as { handle: string };
   const profileHandle = decodeURIComponent(handle);
 
@@ -42,8 +40,8 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
   const [questionSendingDoneMessage, setQuestionSendingDoneMessage] = useState<{ title: string; body: string }>({
-    title: '성공',
-    body: '질문했어요!',
+    title: t('common.success'),
+    body: t('profile.question_sent'),
   });
   const questionSendingModalRef = useRef<HTMLDialogElement>(null);
   const blockConfirmModalRef = useRef<HTMLDialogElement>(null);
@@ -107,11 +105,7 @@ export default function Profile() {
 
   const shareUrl = () => {
     const server = localStorage.getItem('server');
-    const text = `저의 ${josa(
-      userProfile?.questionBoxName,
-      '이에요!',
-      '예요!',
-    )} #neo_quesdon ${location.origin}/main/user/${userProfile?.handle}`;
+    const text = `${userProfile?.name}${t('profile.inbox')} #neo_quesdon ${location.origin}/main/user/${userProfile?.handle}`;
     return `https://${server}/share?text=${encodeURIComponent(text)}`;
   };
 
@@ -124,7 +118,7 @@ export default function Profile() {
       body: JSON.stringify({ targetHandle: profileHandle }),
     });
     if (!res.ok) {
-      alert(await res.text());
+      onApiError(res.status, res);
       setIsLoading(false);
     }
     setIsUserBlocked(true);
@@ -140,7 +134,7 @@ export default function Profile() {
       body: JSON.stringify({ targetHandle: profileHandle }),
     });
     if (!res.ok) {
-      alert(await res.text());
+      onApiError(res.status, res);
       setIsLoading(false);
     }
     setIsUserBlocked(false);
@@ -156,14 +150,14 @@ export default function Profile() {
       if (user_handle === null) {
         setError('nonAnonQuestion', {
           type: 'notLoggedIn',
-          message: '작성자 공개를 하려면 로그인을 해주세요!',
+          message: t('error.login_required_for_public_question')
         });
         return;
       }
       if (detectWhiteSpaces.test(e.question) === true) {
         setError('question', {
           type: 'questionOnlyWhiteSpace',
-          message: '아무것도 없는 질문을 보내시려구요...?',
+          message: t('error.empty_question')
         });
         return;
       }
@@ -182,7 +176,10 @@ export default function Profile() {
         setIsLoading(false);
       } else {
         setIsLoading(false);
-        setQuestionSendingDoneMessage({ title: '에러', body: `질문을 보내는데 실패했어요! ${await res.text()}` });
+        setQuestionSendingDoneMessage({ 
+          title: t('user.profile.error.title'), 
+          body: t('user.profile.error.send_failed', { error: await res.text() })
+        });
       }
     }
     // 작성자 비공개
@@ -190,14 +187,14 @@ export default function Profile() {
       if (userProfile?.stopAnonQuestion === true) {
         setError('nonAnonQuestion', {
           type: 'stopAnonQuestion',
-          message: '익명 질문은 받지 않고 있어요...',
+          message: t('error.anonymous_questions_not_accepted')
         });
         return;
       } else {
         if (detectWhiteSpaces.test(e.question) === true) {
           setError('question', {
             type: 'questionOnlyWhiteSpace',
-            message: '아무것도 없는 질문을 보내시려구요...?',
+            message: t('error.empty_question')
           });
           return;
         }
@@ -213,13 +210,16 @@ export default function Profile() {
         const res = await mkQuestionCreateApi(req);
         if (res.ok) {
           setIsLoading(false);
-          setQuestionSendingDoneMessage({
-            title: '성공',
-            body: '질문했어요!',
+          setQuestionSendingDoneMessage({ 
+            title: t('common.success'),
+            body: t('profile.question_sent')
           });
         } else {
           setIsLoading(false);
-          setQuestionSendingDoneMessage({ title: '에러', body: `질문을 보내는데 실패했어요! ${await res.text()}` });
+          setQuestionSendingDoneMessage({ 
+            title: t('common.error'),
+            body: t('profile.question_send_failed', {error: await res.text()})
+          });
         }
       }
     }
@@ -239,7 +239,9 @@ export default function Profile() {
           method: 'POST',
           body: JSON.stringify({ targetHandle: profileHandle }),
         });
-        if (!res.ok) alert('차단여부를 불러오는데 오류가 발생했어요!');
+        if (!res.ok) {
+          onApiError(res.status, res);
+        }
         const data = (await res.json()) as SearchBlockListResDto;
         setIsUserBlocked(data.isBlocked);
       })();
@@ -284,7 +286,7 @@ export default function Profile() {
               {userProfile.stopAnonQuestion && !userProfile.stopNewQuestion && (
                 <div className="chat chat-end w-32 window:w-full desktop:w-full relative bottom-[40%] right-[22%] window:right-[60%] deskstop:left-[60%]">
                   <div className="chat-bubble text-xs flex items-center bg-base-100 text-slate-700 dark:text-slate-400">
-                    작성자 공개 질문만 받아요!
+                    {t('profile.only_public_questions')}
                   </div>
                 </div>
               )}
@@ -296,12 +298,12 @@ export default function Profile() {
             {userProfile && userProfile.stopNewQuestion ? (
               <div className="flex flex-col items-center desktop:flex-row">
                 <NameComponents username={userProfile.name} width={32} height={32} />
-                <span>님은 지금 질문을 받지 않고 있어요...</span>
+                <span>{t('profile.none')}</span>
               </div>
             ) : (
               <div className="flex flex-col items-center desktop:flex-row window:flex-row window:text-2xl">
                 <NameComponents username={userProfile?.name} width={32} height={32} />
-                <span>님의 {josa(userProfile?.questionBoxName, '이에요!', '예요!')}</span>
+                <span>{t('profile.inbox')}</span>
               </div>
             )}
           </div>
@@ -312,7 +314,7 @@ export default function Profile() {
               required: 'required',
               maxLength: 1000,
             })}
-            placeholder="질문 내용을 입력해 주세요"
+            placeholder={t('profile.placeholder')}
             className={`w-[90%] mb-2 font-thin leading-loose textarea ${
               errors.question ? 'textarea-error' : 'textarea-bordered'
             }`}
@@ -346,10 +348,10 @@ export default function Profile() {
                 onClick={() => setValue('nonAnonQuestion', !nonAnonQuestion)}
               />
               <input type="hidden" {...register('nonAnonQuestion')} />
-              <span>작성자 공개</span>
+              <span>{t('profile.author')}</span>
             </div>
             <button type="submit" className="btn btn-primary">
-              질문하기
+              {t('profile.submit')}
             </button>
           </div>
         </form>
@@ -357,56 +359,54 @@ export default function Profile() {
       {localHandle === profileHandle && (
         <div className="h-fit py-4 glass rounded-box flex flex-col items-center shadow mb-2 dark:text-white">
           <a className="link" href={shareUrl()} target="_blank" rel="noreferrer">
-            {userProfile?.instanceType}에 질문상자 페이지를 공유
+            {userProfile?.instanceType}{t('profile.share')}
           </a>
         </div>
       )}
       <DialogModalLoadingOneButton
         isLoading={isLoading}
-        title_loading={'보내는 중'}
+        title_loading={t('modal.sending')}
         title_done={questionSendingDoneMessage.title}
-        body_loading={'질문을 보내고 있어요...'}
+        body_loading={t('modal.sending_question')}
         body_done={questionSendingDoneMessage.body}
-        loadingButtonText={'로딩중'}
-        doneButtonText={'닫기'}
+        loadingButtonText={t('common.loading')}
+        doneButtonText={t('common.close')}
         ref={questionSendingModalRef}
       />
       <DialogModalTwoButton
-        title={'차단'}
-        body={
-          '정말 차단하시겠어요...?\n차단 이후에는 서로의 답변이 숨겨지고 차단한 사람이 나에게 질문을 할 수 없게 되어요.'
-        }
-        confirmButtonText={'확인'}
+        title={t('modal.block')}
+        body={t('modal.block_confirmation')}
+        confirmButtonText={t('common.confirm')}
         onClick={handleBlock}
-        cancelButtonText={'취소'}
+        cancelButtonText={t('common.cancel')}
         ref={blockConfirmModalRef}
       />
       <DialogModalLoadingOneButton
         isLoading={isLoading}
-        title_loading={'차단'}
-        title_done={'차단'}
-        body_loading={'차단하는 중...'}
-        body_done={'차단되었어요!'}
-        loadingButtonText={'로딩중'}
-        doneButtonText={'닫기'}
+        title_loading={t('modal.block')}
+        title_done={t('modal.block')}
+        body_loading={t('modal.blocking')}
+        body_done={t('modal.blocked')}
+        loadingButtonText={t('common.loading')}
+        doneButtonText={t('common.close')}
         ref={blockSuccessModalRef}
       />
       <DialogModalTwoButton
-        title={'차단 해제'}
-        body={'차단 해제하시겠어요?'}
-        confirmButtonText={'확인'}
+        title={t('modal.unblock')}
+        body={t('modal.unblock_confirmation')}
+        confirmButtonText={t('common.confirm')}
         onClick={handleUnBlock}
-        cancelButtonText={'취소'}
+        cancelButtonText={t('common.cancel')}
         ref={unblockConfirmModalRef}
       />
       <DialogModalLoadingOneButton
         isLoading={isLoading}
-        title_loading={'차단 해제'}
-        title_done={'차단 해제'}
-        body_loading={'차단 해제하는 중...'}
-        body_done={'차단 해제되었어요!'}
-        loadingButtonText={'로딩중'}
-        doneButtonText={'닫기'}
+        title_loading={t('modal.unblock')}
+        title_done={t('modal.unblock')}
+        body_loading={t('modal.unblocking')}
+        body_done={t('modal.unblocked')}
+        loadingButtonText={t('common.loading')}
+        doneButtonText={t('common.close')}
         ref={unblockSuccessModalRef}
       />
     </div>

@@ -4,19 +4,20 @@ import Link from 'next/link';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { FaInfoCircle, FaUser } from 'react-icons/fa';
 import DialogModalTwoButton from '@/app/_components/modalTwoButton';
-import { refreshJwt } from '@/utils/refreshJwt/refresh-jwt-token';
 import { logout } from '@/utils/logout/logout';
 import { FaXmark } from 'react-icons/fa6';
 import WebSocketState from '../_components/webSocketState';
 import { MyProfileContext, NotificationContext } from './layout';
 import { webSocketManager } from '@/app/main/_websocketManager';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
+import { useTranslation } from 'react-i18next';
 
 type headerProps = {
   questionsNum: number;
   loginChecked: boolean;
 };
 export default function MainHeader({ questionsNum, loginChecked }: headerProps) {
+  const { t } = useTranslation();
   const profile = useContext(MyProfileContext);
   const logoutModalRef = useRef<HTMLDialogElement>(null);
   const [questionsToastMenu, setQuestionsToastMenu] = useState<boolean>(false);
@@ -39,26 +40,42 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
     if (!loginChecked) {
       return;
     }
-    const webSocketRetryInterval = setInterval(
-      () => {
-        if (websocketRef.current === null || websocketRef.current?.readyState === 3) {
-          if (ws_retry_counter.current < 5) {
-            ws_retry_counter.current += 1;
-            console.log('웹소켓 연결 재시도...', ws_retry_counter.current);
-            webSocketManager({ websocketRef, toastTimeout, setWsState, setQuestionsToastMenu });
-          } else {
-            console.log('웹소켓 연결 최대 재시도 횟수를 초과했어요!');
-            clearInterval(webSocketRetryInterval);
-            return;
-          }
-        } else {
-          websocketRef.current.send(`mua: ${Date.now()}`);
-        }
-      },
-      5000 + ws_retry_counter.current * 2000,
-    );
 
-    webSocketManager({ websocketRef, toastTimeout, setWsState, setQuestionsToastMenu });
+    // 指数バックオフではなく固定の短い間隔で再試行
+    const RETRY_INTERVAL = 1000; // 1秒間隔に短縮
+    const MAX_RETRIES = 10; // 再試行回数を増やす
+
+    const webSocketRetryInterval = setInterval(() => {
+      if (websocketRef.current === null || websocketRef.current?.readyState === 3) {
+        if (ws_retry_counter.current < MAX_RETRIES) {
+          ws_retry_counter.current += 1;
+          console.log(t('websocket.retry_connect'), ws_retry_counter.current);
+          // 即時再接続を試みる
+          webSocketManager({ 
+            websocketRef, 
+            toastTimeout, 
+            setWsState, 
+            setQuestionsToastMenu 
+          });
+        } else {
+          console.log(t('websocket.max_retries_exceeded'));
+          clearInterval(webSocketRetryInterval);
+          return;
+        }
+      } else {
+        // キープアライブメッセージを短い間隔で送信
+        websocketRef.current.send(`ping: ${Date.now()}`);
+      }
+    }, RETRY_INTERVAL);
+
+    // 初回接続
+    webSocketManager({ 
+      websocketRef, 
+      toastTimeout, 
+      setWsState, 
+      setQuestionsToastMenu 
+    });
+
     return () => {
       clearTimeout(toastTimeout.current);
       clearInterval(webSocketRetryInterval);
@@ -80,17 +97,6 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
     setNotiNum(notificationContext.unread_count);
   }, [notificationContext]);
 
-  useEffect(() => {
-    const fn = async () => {
-      const now = Math.ceil(Date.now() / 1000);
-      // JWT 리프레시로부터 1시간이 지난 경우 refresh 시도
-      const last_token_refresh = Number.parseInt(localStorage.getItem('last_token_refresh') ?? '0');
-      if (now - last_token_refresh > 3600) {
-        await refreshJwt();
-      }
-    };
-    fn();
-  }, []);
 
   return (
     <div className="w-[90%] window:w-[80%] desktop:w-[70%] navbar bg-base-100 shadow rounded-box my-4">
@@ -99,7 +105,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
           Neo-Quesdon
         </Link>
       </div>
-      <div className="mr-2 tooltip tooltip-bottom" data-tip="스트리밍 연결상태">
+      <div className="mr-2 tooltip tooltip-bottom" data-tip={t('header.streaming_staus')}>
         <WebSocketState connection={wsState} />
       </div>
       <div className="dropdown dropdown-end">
@@ -128,7 +134,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow"
             >
               <li>
-                <Link href={'/'}>로그인</Link>
+                <Link href={'/'}>{t('header.login')}</Link>
               </li>
             </ul>
           </div>
@@ -140,11 +146,11 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
               onClick={menuClose}
             >
               <li>
-                <Link href={`/main/user/${profile?.handle}`}>마이페이지</Link>
+                <Link href={`/main/user/${profile?.handle}`}>{t('header.profile')}</Link>
               </li>
               <li className="flex">
                 <Link href={'/main/questions'}>
-                  <span>미답변 질문</span>
+                  <span>{t('header.unanswered')}</span>
                   {questionsNum && questionsNum > 0 ? (
                     <>
                       <div className="badge badge-warning badge-sm">{questionsNum}</div>
@@ -156,7 +162,7 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
               </li>
               <li>
                 <Link href={'/main/notification'} scroll={false}>
-                  <span>알림</span>
+                  <span>{t('header.notification')}</span>
                   {notiNum > 0 ? (
                     <>
                       <div className="badge badge-warning badge-sm">{notiNum}</div>
@@ -167,23 +173,23 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
                 </Link>
               </li>
               <li>
-                <Link href={'/main/social'}>소셜(베타)</Link>
+                <Link href={'/main/social'}>{t('header.social')}</Link>
               </li>
               <li>
-                <Link href={'/main/settings'}>설정</Link>
+                <Link href={'/main/settings'}>{t('header.settings')}</Link>
               </li>
               <li onClick={() => logoutModalRef.current?.showModal()}>
-                <a>로그아웃</a>
+                <a>{t('header.logout.title')}</a>
               </li>
             </ul>
           </div>
         )}
       </div>
       <DialogModalTwoButton
-        title={'로그아웃'}
-        body={'정말로 로그아웃 하시겠어요?'}
-        confirmButtonText={'로그아웃'}
-        cancelButtonText={'취소'}
+        title={t('header.logout.title')}
+        body={t('header.logout.body')}
+        confirmButtonText={t('header.logout.confirm')}
+        cancelButtonText={t('header.logout.cancel')}
         ref={logoutModalRef}
         onClick={logout}
       />
@@ -198,8 +204,8 @@ export default function MainHeader({ questionsNum, loginChecked }: headerProps) 
           >
             <FaInfoCircle size={20} />
             <div className="">
-              <h3 className="text-lg">새 질문이 있어요!</h3>
-              <span className="text-sm font-thin">여기를 눌러 확인하기</span>
+              <h3 className="text-lg">{t('header.new_questions')}</h3>
+              <span className="text-sm font-thin">{t('header.click_to_check')}</span>
             </div>
           </Link>
           <FaXmark className="absolute top-7 right-8 cursor-pointer" onClick={() => setQuestionsToastMenu(false)} />

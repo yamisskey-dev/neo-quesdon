@@ -11,10 +11,13 @@ import CollapseMenu from '@/app/_components/collapseMenu';
 import DialogModalTwoButton from '@/app/_components/modalTwoButton';
 import { AccountCleanReqDto } from '@/app/_dto/account-clean/account-clean.dto';
 import { FaLock, FaUserLargeSlash } from 'react-icons/fa6';
-import { MdDeleteSweep, MdOutlineCleaningServices } from 'react-icons/md';
+import { MdDeleteForever, MdDeleteSweep, MdOutlineCleaningServices } from 'react-icons/md';
 import { MyProfileContext } from '@/app/main/layout';
 import { MyProfileEv } from '@/app/main/_events';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
+import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
+import { AccountDeleteReqDto } from '@/app/_dto/account-delete/account-delete.dto';
 
 export type FormValue = {
   stopAnonQuestion: boolean;
@@ -48,11 +51,11 @@ async function updateUserSettings(value: FormValue) {
       },
     });
     if (!res.ok) {
-      throw await res.text();
+      onApiError(res.status, res);
+      return;
     }
     MyProfileEv.SendUpdateReq({ ...body });
   } catch (err) {
-    alert(`설정 업데이트에 실패했어요 ${err}`);
     throw err;
   }
 }
@@ -62,11 +65,13 @@ function Divider({ className }: { className?: string }) {
 }
 
 export default function Settings() {
+  const { t } = useTranslation();
   const userInfo = useContext(MyProfileContext);
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
   const [defaultFormValue, setDefaultFormValue] = useState<FormValue>();
   const logoutAllModalRef = useRef<HTMLDialogElement>(null);
   const accountCleanModalRef = useRef<HTMLDialogElement>(null);
+  const accountDeleteModalRef = useRef<HTMLDialogElement>(null);
   const importBlockModalRef = useRef<HTMLDialogElement>(null);
   const deleteAllQuestionsModalRef = useRef<HTMLDialogElement>(null);
   const deleteAllNotificationsModalRef = useRef<HTMLDialogElement>(null);
@@ -111,12 +116,8 @@ export default function Settings() {
     if (res.ok) {
       localStorage.removeItem('user_handle');
       window.location.href = '/';
-    } else if (res.status === 429) {
-      alert('요청 제한을 초과했어요. 몇분 후 다시 시도해 주세요');
-      setButtonClicked(false);
-      return;
     } else {
-      alert('오류가 발생했어요');
+      onApiError(res.status, res);
       setButtonClicked(false);
       return;
     }
@@ -129,7 +130,6 @@ export default function Settings() {
     setButtonClicked(true);
     const user_handle = userInfo?.handle;
     if (!user_handle) {
-      alert(`오류: 유저 정보를 알 수 없어요!`);
       return;
     }
     const req: AccountCleanReqDto = {
@@ -142,16 +142,38 @@ export default function Settings() {
     });
     if (res.ok) {
       console.log('계정청소 시작됨...');
-    } else if (res.status === 429) {
-      alert('요청 제한을 초과했어요. 잠시 후 다시 시도해 주세요');
-      setButtonClicked(false);
-      return;
     } else {
-      alert('오류가 발생했어요');
+      onApiError(res.status, res);
     }
     setTimeout(() => {
       setButtonClicked(false);
     }, 2000);
+  };
+
+  const onAccountDelete = async () => {
+    setButtonClicked(true);
+    setTimeout(() => {
+      setButtonClicked(false);
+    }, 2000);
+    const user_handle = userInfo?.handle;
+    if (!user_handle) {
+      return;
+    }
+    const req: AccountDeleteReqDto = {
+      handle: user_handle,
+    };
+    const res = await fetch('/api/user/account-delete', {
+      method: 'POST',
+      body: JSON.stringify(req),
+    });
+    if (res.ok) {
+      localStorage.removeItem('user_handle');
+      localStorage.removeItem('last_token_refresh');
+      await fetch('/api/web/logout');
+      window.location.replace('/');
+    } else {
+      onApiError(res.status, res);
+    }
   };
 
   const onImportBlock = async () => {
@@ -161,12 +183,8 @@ export default function Settings() {
     });
     if (res.ok) {
       console.log('블락 리스트 가져오기 시작됨...');
-    } else if (res.status === 429) {
-      alert('요청 제한을 초과했어요. 잠시 후 다시 시도해 주세요');
-      setButtonClicked(false);
-      return;
     } else {
-      alert(`오류가 발생했어요 ${await res.text()}`);
+      onApiError(res.status, res);
     }
     setTimeout(() => {
       setButtonClicked(false);
@@ -218,83 +236,87 @@ export default function Settings() {
                   </div>
                 </div>
                 <div className="desktop:ml-2 flex flex-col items-center desktop:items-start">
-                  <span className="text-xl font-thin">안녕하세요,</span>
                   <div className="flex text-2xl items-center">
                     <NameComponents username={userInfo?.name} width={24} height={24} />
-                    <span>님!</span>
                   </div>
                 </div>
               </div>
               <div className="flex flex-col col-span-2 items-center">
                 <div className="text-3xl flex justify-center mt-4 w-full window:w-[90%] desktop:w-full">
-                  <span>우리만의 비밀설정창</span>
+                  <span>{t('settings.window')}</span>
                 </div>
                 <Divider />
                 <div className="w-full window:w-[70%] flex flex-col desktop:w-full gap-2 desktop:grid desktop:grid-cols-2">
                   {userInfo && (
                     <>
-                      <CollapseMenu id={'basicSetting'} text="기본설정">
+                      <CollapseMenu id={'basicSetting'} text={t('settings.preferences')}>
                         <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col items-center">
                           <div className="grid grid-cols-[20%_80%] desktop:w-[24rem] desktop:grid-cols-[7rem_100%] gap-2 items-center p-2">
                             <input {...register('stopNewQuestion')} type="checkbox" className="toggle toggle-success" />
-                            <span className="font-thin">더 이상 질문을 받지 않기</span>
+                            <span className="font-thin">{t('settings.stop')}</span>
+                            
                             <input
                               {...register('stopAnonQuestion')}
                               type="checkbox"
-                              className="toggle toggle-success"
+                              className="toggle toggle-success" 
                               disabled={formValues.stopNewQuestion}
                             />
-                            <span className="font-thin">익명 질문을 받지 않기</span>
+                            <span className="font-thin">{t('settings.refuse')}</span>
+
                             <input
                               {...register('stopNotiNewQuestion')}
                               type="checkbox"
                               className="toggle toggle-success"
                               disabled={formValues.stopNewQuestion}
                             />
-                            <span className="font-thin">새 질문 DM으로 받지 않기</span>
+                            <span className="font-thin">{t('settings.stop_notification_dm')}</span>
+
                             <input {...register('stopPostAnswer')} type="checkbox" className="toggle toggle-success" />
-                            <span className="font-thin">내 답변을 올리지 않기</span>
+                            <span className="font-thin">{t('settings.stop_post_answer')}</span>
+
                             <div className="w-fit col-span-2 desktop:grid desktop:grid-cols-subgrid flex flex-col-reverse justify-center desktop:items-center gap-2 ml-[calc(20%+8px)] desktop:ml-0">
                               <select
                                 {...register('visibility')}
                                 className="select select-ghost select-sm w-fit"
                                 disabled={formValues.stopPostAnswer}
                               >
-                                <option value="public">공개</option>
-                                <option value="home">홈</option>
-                                <option value="followers">팔로워</option>
+                                <option value="public">{t('settings.visibility.public')}</option>
+                                <option value="home">{t('settings.visibility.home')}</option>
+                                <option value="followers">{t('settings.visibility.followers')}</option>
                               </select>
-                              <span className="font-thin"> 답변을 올릴 때 기본 공개 범위</span>
+                              <span className="font-thin">{t('settings.answer_visibility')}</span>
                             </div>
+
                             <div className="col-start-2 flex flex-col-reverse gap-2">
                               <input
                                 {...register('questionBoxName', {
                                   maxLength: 10,
-                                })}
+                                })} 
                                 type="text"
-                                placeholder="질문함"
+                                placeholder={t('settings.questionbox')}
                                 className={`input input-bordered input-sm w-48 ${
                                   errors.questionBoxName?.type === 'maxLength' && 'input-error'
                                 }`}
                               />
-                              <span className="font-thin">질문함 이름 (10글자 이내)</span>
+                              <span className="font-thin">{t('settings.inbox_name_limit')}</span>
                             </div>
                           </div>
                           <Divider />
                           <div className="flex flex-col desktop:w-[24rem] gap-2 items-center p-2">
-                            <div className="text-lg"> 질문 단어 뮤트 </div>
+                            <div className="text-lg">{t('settings.word_mute')}</div>
                             <div className="font-thin">
-                              뮤트할 단어를 한줄에 하나씩 입력합니다. <br /> 정규식 문법도 지원합니다.
+                              {t('settings.word_mute_description')} <br />
+                              {t('settings.regex_support')}
                             </div>
                             <textarea
                               {...register('wordMuteList')}
                               className="textarea textarea-bordered w-full min-h-[15vh] text-base"
-                              placeholder="뮤트할 단어, 또는 정규식"
+                              placeholder={t('settings.word_mute_placeholder')}
                             ></textarea>
                           </div>
                           <div className="flex w-full justify-end mt-2">
                             <button type="submit" className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-primary'}`}>
-                              {buttonClicked ? '잠깐만요...' : '저장'}
+                              {buttonClicked ? t('settings.please_wait') : '저장'}
                             </button>
                           </div>
                         </form>
@@ -302,11 +324,11 @@ export default function Settings() {
                       <div className="flex justify-center">
                         <BlockList />
                       </div>
-                      <CollapseMenu id={'securitySettings'} text="보안">
+                      <CollapseMenu id={'securitySettings'} text={t('settings.security')}>
                         <div className="w-full flex flex-col items-center">
                           <span className="font-normal text-xl py-3 flex items-center gap-2">
                             <FaLock />
-                            모든 기기에서 로그아웃 하기{' '}
+                            {t('settings.logout_all_devices')}
                           </span>
                           <button
                             type="button"
@@ -315,19 +337,19 @@ export default function Settings() {
                             }}
                             className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-warning'}`}
                           >
-                            {buttonClicked ? '잠깐만요...' : '모든 기기에서 로그아웃'}
+                            {buttonClicked ? t('settings.please_wait') : t('settings.logout_all')}
                           </button>
                         </div>
                       </CollapseMenu>
-                      <CollapseMenu id={'dangerSetting'} text="위험한 설정">
+                      <CollapseMenu id={'dangerSetting'} text={t('settings.dangerous')}>
                         <div className="w-full flex flex-col items-center">
                           <Divider />
                           <div className="font-normal text-xl py-3 flex items-center gap-2">
                             <MdDeleteSweep size={24} />
-                            알림함 비우기
+                            {t('settings.clear_notifications')}
                           </div>
                           <div className="font-thin px-4 py-2 break-keep">
-                            알림함의 모든 알림을 지워요. 지워진 알림은 되돌릴 수 없으니 주의하세요.
+                            {t('settings.clear_notifications_warning')}
                           </div>
                           <button
                             type="button"
@@ -336,16 +358,32 @@ export default function Settings() {
                             }}
                             className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-warning'}`}
                           >
-                            {buttonClicked ? '잠깐만요...' : '알림함 비우기'}
+                            {buttonClicked ? t('settings.please_wait') : t('settings.clear_notifications_btn')}
+                          </button>
+                          <Divider />
+                          <div className="font-normal text-xl py-3 flex items-center gap-2">
+                            <MdDeleteSweep size={24} />
+                            {t('settings.clear_questions')}
+                          </div>
+                          <div className="font-thin px-4 py-2 break-keep">
+                            {t('settings.clear_questions_warning')}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              deleteAllQuestionsModalRef.current?.showModal();
+                            }}
+                            className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-warning'}`}
+                          >
+                            {buttonClicked ? t('settings.please_wait') : t('settings.clear_questions_btn')}
                           </button>
                           <Divider />
                           <div className="font-normal text-xl py-3 flex items-center gap-2">
                             <FaUserLargeSlash />
-                            차단 목록 가져오기
+                            {t('settings.import_blocks_text')}
                           </div>
                           <div className="font-thin px-4 py-2 break-keep">
-                            차단 목록을 내 연합우주 계정에서 가져오는 기능이에요. 차단된 사용자는 나에게 더 이상 질문을
-                            보낼 수 없어요. 사용자를 차단하면 서로의 답변이 숨겨져요.
+                            {t('settings.import_blocks_description')}
                           </div>
                           <button
                             type="button"
@@ -354,16 +392,15 @@ export default function Settings() {
                             }}
                             className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-warning'}`}
                           >
-                            {buttonClicked ? '잠깐만요...' : '차단 목록 가져오기'}
+                            {buttonClicked ? t('settings.please_wait') : t('settings.import_blocks_btn')}
                           </button>
                           <Divider />
                           <div className="font-normal text-xl py-3 flex items-center gap-2">
                             <MdOutlineCleaningServices />
-                            계정 청소하기
+                            {t('settings.clean_account')}
                           </div>
                           <div className="font-thin px-4 py-2 break-keep">
-                            네오 퀘스돈에서 이 계정으로 지금까지 작성한 모든 답변을 지워요. 이 작업은 시간이 걸리고,
-                            지워진 글은 되돌릴 수 없으니 주의하세요.{' '}
+                            {t('settings.clean_account_warning')}
                           </div>
                           <button
                             type="button"
@@ -372,24 +409,25 @@ export default function Settings() {
                             }}
                             className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-error'}`}
                           >
-                            {buttonClicked ? '잠깐만요...' : '모든 답변을 삭제'}
+                            {buttonClicked ? t('settings.please_wait') : t('settings.clean_account_btn')}
                           </button>
+
                           <Divider />
                           <div className="font-normal text-xl py-3 flex items-center gap-2">
-                            <MdDeleteSweep size={24} />
-                            모든 질문 삭제하기
+                            <MdDeleteForever size={24} />
+                            {t('settings.delete_account')}
                           </div>
                           <div className="font-thin px-4 py-2 break-keep">
-                            아직 답변하지 않은 모든 질문들을 지워요. 지워진 글은 되돌릴 수 없으니 주의하세요.
+                            {t('settings.delete_account_description')}
                           </div>
                           <button
                             type="button"
                             onClick={() => {
-                              deleteAllQuestionsModalRef.current?.showModal();
+                              accountDeleteModalRef.current?.showModal();
                             }}
                             className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-error'}`}
                           >
-                            {buttonClicked ? '잠깐만요...' : '모든 질문을 삭제'}
+                            {buttonClicked ? t('settings.please_wait') : t('settings.delete_account_btn')}
                           </button>
                         </div>
                       </CollapseMenu>
@@ -400,44 +438,52 @@ export default function Settings() {
             </>
           )}
           <DialogModalTwoButton
-            title={'주의'}
-            body={'정말 모든 기기를 로그아웃 시킬까요?'}
-            confirmButtonText={'네'}
-            cancelButtonText={'아니오'}
+            title={t('modal.warning')}
+            body={t('modal.confirm_logout_all')}
+            confirmButtonText={t('modal.yes')}
+            cancelButtonText={t('modal.no')}
             ref={logoutAllModalRef}
             onClick={onLogoutAll}
           />
           <DialogModalTwoButton
-            title={'주의'}
-            body={'알림함을 비울까요?'}
-            confirmButtonText={'네'}
-            cancelButtonText={'아니오'}
+            title={t('modal.clear_notifications.title')}
+            body={t('modal.clear_notifications.body')}
+            confirmButtonText={t('modal.clear_notifications.confirm')}
+            cancelButtonText={t('modal.clear_notifications.cancel')}
             ref={deleteAllNotificationsModalRef}
             onClick={onDeleteAllNotifications}
           />
           <DialogModalTwoButton
-            title={'경고'}
-            body={'미답변 질문들을 모두 지울까요? \n이 작업은 시간이 걸리고, 지워진 질문은 복구할 수 없어요!'}
-            confirmButtonText={'네'}
-            cancelButtonText={'아니오'}
+            title={t('modal.clear_questions.title')}
+            body={t('modal.clear_questions.body')}
+            confirmButtonText={t('modal.clear_questions.confirm')}
+            cancelButtonText={t('modal.clear_questions.cancel')}
             ref={deleteAllQuestionsModalRef}
             onClick={onDeleteAllQuestions}
           />
           <DialogModalTwoButton
-            title={'경고'}
-            body={'그동안 썼던 모든 답변을 지울까요? \n이 작업은 시간이 걸리고, 지워진 답변은 복구할 수 없어요!'}
-            confirmButtonText={'네'}
-            cancelButtonText={'아니오'}
+            title={t('modal.import_blocks.title')}
+            body={t('modal.import_blocks.body', { instance: userInfo.instanceType })}
+            confirmButtonText={t('modal.import_blocks.confirm')}
+            cancelButtonText={t('modal.import_blocks.cancel')}
+            ref={importBlockModalRef}
+            onClick={onImportBlock}
+          />
+          <DialogModalTwoButton
+            title={t('modal.clean_account.title')}
+            body={t('modal.clean_account.body')}
+            confirmButtonText={t('modal.clean_account.confirm')}
+            cancelButtonText={t('modal.clean_account.cancel')}
             ref={accountCleanModalRef}
             onClick={onAccountClean}
           />
           <DialogModalTwoButton
-            title={'주의'}
-            body={`${userInfo.instanceType} 에서 블락 목록을 가져올까요? \n 이 작업은 완료되는데 시간이 조금 걸려요!`}
-            confirmButtonText={'네'}
-            cancelButtonText={'아니오'}
-            ref={importBlockModalRef}
-            onClick={onImportBlock}
+            title={t('modal.delete_account.title')}
+            body={t('modal.delete_account.body')}
+            confirmButtonText={t('modal.delete_account.confirm')}
+            cancelButtonText={t('modal.delete_account.cancel')}
+            ref={accountDeleteModalRef}
+            onClick={onAccountDelete}
           />
         </>
       )}

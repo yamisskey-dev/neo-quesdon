@@ -6,8 +6,10 @@ import { NotificationContext } from '../main/layout';
 import Link from 'next/link';
 import { FaReply } from 'react-icons/fa';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
+import { useTranslation } from 'react-i18next';
 
 export default function Notification() {
+  const { t } = useTranslation();
   const notificationContext = useContext(NotificationContext);
 
   const parseNoti = (noti: NotificationPayloadTypes, i: number) => {
@@ -67,7 +69,7 @@ export default function Notification() {
   return (
     <div className="overflow-y-scroll">
       <h2 className="text-3xl desktop:text-4xl font-semibold">
-        {notificationContext && notificationContext.unread_count}개의 새로운 알림
+        {notificationContext && notificationContext.unread_count}{t('notification.new_questions')}
       </h2>
       {notificationContext?.notifications && notificationContext.notifications.map((el, i) => parseNoti(el, i))}
     </div>

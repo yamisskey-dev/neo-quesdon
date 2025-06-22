@@ -7,6 +7,8 @@ import { AnswerWithProfileDto } from '../_dto/answers/Answers.dto';
 import { userProfileDto } from '../_dto/fetch-profile/Profile.dto';
 import { useParams } from 'next/navigation';
 import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
+import { useTranslation } from 'react-i18next';
+import { getI18nLocale } from '@/app/i18n/locale';
 
 interface askProps {
   value: AnswerWithProfileDto;
@@ -28,6 +30,7 @@ export async function fetchProfile(value: AnswerWithProfileDto) {
 }
 
 export default function Answer({ value, idState, ref }: askProps) {
+  const { t, i18n } = useTranslation();
   const { handle } = useParams() as { handle: string };
   const [showNsfw, setShowNsfw] = useState(false);
   const [userInfo, setUserInfo] = useState<userProfileDto>();
@@ -41,28 +44,27 @@ export default function Answer({ value, idState, ref }: askProps) {
 
   useEffect(() => {
     fetchProfile(value).then((r) => setUserInfo(r));
-    setShowNsfw(!value.nsfwedAnswer);
   }, [value]);
 
   return (
     <div className="w-full glass rounded-box px-2 desktop:px-8 py-4 mb-2 shadow">
-      {!showNsfw && (
+      {!showNsfw && value.nsfwedAnswer && (
         <div className="fixed top-0 left-0 z-10 gap-2 w-full h-full flex flex-col justify-center items-center">
-          <span>답변자가 NSFW로 체크한 질문이에요!</span>
+          <span>{t('answer.check_nsfw')}</span>
           <button className="btn" onClick={() => setShowNsfw(!showNsfw)}>
-            질문 보기
+          {t('answer.view_question')}
           </button>
         </div>
       )}
 
-      <div className={`${!showNsfw && 'blur'} w-full h-full`}>
+      <div className={`${!showNsfw && value.nsfwedAnswer && 'blur'} w-full h-full`}>
         <div className="chat chat-start flex ml-2 desktop:ml-0 justify-between">
           <div className="w-full">
             <div className="chat-header dark:text-white">
               {value.questioner ? (
                 <Link href={`/main/user/${value.questioner}`}>{value.questioner}</Link>
               ) : (
-                '익명의 질문자'
+                t('answer.anonymous')
               )}
             </div>
             <div className="flex items-center text-sm break-all window:text-xl desktop:text-2xl chat-bubble text-slate-200">
@@ -80,7 +82,7 @@ export default function Answer({ value, idState, ref }: askProps) {
                   }
                 }}
               >
-                삭제
+                {t('answer.delete')}
               </a>
             </div>
           )}
@@ -103,7 +105,7 @@ export default function Answer({ value, idState, ref }: askProps) {
           </div>
           <div className="chat-footer font-thin text-xs mt-2 underline text-blue-900 dark:text-slate-100">
             <Link href={`/main/user/${value.answeredPersonHandle}/${value.id}`}>
-              {new Date(value.answeredAt).toLocaleString('ko-kr', { hour12: false })}
+              {new Date(value.answeredAt).toLocaleString(getI18nLocale(i18n), { hour12: false })}
             </Link>
           </div>
         </div>

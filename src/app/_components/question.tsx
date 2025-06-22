@@ -5,6 +5,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { RefObject, useEffect, useLayoutEffect, useRef } from 'react';
 import { CreateAnswerDto } from '@/app/_dto/answers/create-answer.dto';
 import { questionDto } from '@/app/_dto/questions/question.dto';
+import { onApiError } from '@/utils/api-error/onApiError';
+import { useTranslation } from 'react-i18next';
 
 interface formValue {
   answer: string;
@@ -55,6 +57,7 @@ export default function Question({
     },
     mode: 'onChange',
   });
+  const { t } = useTranslation();
 
   const onCtrlEnter = async (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -80,7 +83,7 @@ export default function Question({
     if (detectWhiteSpaces.test(e.answer) === true) {
       setError('answer', {
         type: 'answerOnlyWhiteSpace',
-        message: '답변에 아무말 안 하시게요...?',
+        message: t('question.nocomment'),
       });
       return;
     }
@@ -100,9 +103,8 @@ export default function Question({
         visibility: e.visibility,
       };
       await postAnswer(req);
-    } catch (err) {
+    } catch {
       answerRef.current?.close();
-      alert(err);
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +159,7 @@ export default function Question({
           {singleQuestion.questioner ? (
             <Link href={`/main/user/${singleQuestion.questioner}`}>{singleQuestion.questioner}</Link>
           ) : (
-            '익명의 질문자'
+            t('question.anonymous')
           )}
         </div>
         <div className="chat-bubble flex items-center text-sm break-all window:text-xl desktop:text-2xl text-slate-200">
@@ -172,7 +174,7 @@ export default function Question({
               setId(singleQuestion.id);
             }}
           >
-            삭제
+            {t('question.delete')}
           </span>
           <span
             className="text-red-800 font-bold ml-2 cursor-pointer"
@@ -181,7 +183,7 @@ export default function Question({
               blockingRef.current?.showModal();
             }}
           >
-            질문자 차단
+            {t('question.block')}
           </span>
         </div>
       </div>
@@ -197,7 +199,7 @@ export default function Question({
               className={`textarea textarea-sm text-sm h-24 desktop:h-32 window:text-xl desktop:text-2xl bg-transparent placeholder-neutral-300 text-slate-50 ${
                 errors.answer && 'textarea-error'
               }`}
-              placeholder="답변을 입력하세요..."
+              placeholder={t('question.enter_answer')}
               onKeyDown={onCtrlEnter}
             />
 
@@ -211,32 +213,32 @@ export default function Question({
                       onClick={() => setValue('nsfw', !nsfwedAnswer)}
                     />
                     <input type="hidden" {...register('nsfw')} />
-                    <span className="w-full text-sm desktop:text-md">NSFW로 체크</span>
+                    <span className="w-full text-sm desktop:text-md">{t('question.check_nsfw')}</span>
                   </div>
-                  <div className="flex items-center gap-2 tooltip" data-tip="'최근 올라온 답변'에서 답변이 숨겨져요.">
+                  <div className="flex items-center gap-2 tooltip" data-tip={t('question.hidden_recently')}>
                     <input
                       type="checkbox"
                       className="toggle toggle-accent toggle-sm"
                       onClick={() => setValue('hideFromMain', !hideFromMain)}
                     />
                     <input type="hidden" {...register('hideFromMain')} />
-                    <span className="w-full text-sm desktop:text-md break-keep">메인에서 숨기기</span>
+                    <span className="w-full text-sm desktop:text-md break-keep">{t('question.hide_from')}</span>
                   </div>
                 </div>
-                <div className="tooltip" data-tip="답변 노트를 올릴 범위">
+                <div className="tooltip" data-tip={t('question.scope_for')}>
                   <select {...register('visibility')} className="select select-ghost select-sm dark:shadow tooltip">
                     <option className={'hidden'} value={undefined}>
                       ...
                     </option>
-                    <option value="public">공개</option>
-                    <option value="home">홈</option>
-                    <option value="followers">팔로워</option>
+                    <option value="public">{t('question.scope_public')}</option>
+                    <option value="home">{t('question.scope_home')}</option>
+                    <option value="followers">{t('question.scope_followers')}</option>
                   </select>
                 </div>
               </div>
               <div className="w-full desktop:w-fit flex justify-center">
                 <button type={'submit'} className="btn btn-outline dark:border-white dark:text-slate-200 h-10 btn-md ">
-                  답변
+                  {t('question.submit')}
                 </button>
               </div>
             </div>
@@ -254,6 +256,7 @@ async function postAnswer(req: CreateAnswerDto) {
     headers: { 'Content-type': 'application/json' },
   });
   if (!res.ok) {
-    throw new Error(`답변을 작성하는데 실패했어요!, ${await res.text()}`);
+    onApiError(res.status, res);
+    throw new Error();
   }
 }

@@ -1,8 +1,8 @@
 import UserPage from '@/app/main/user/[handle]/_answers';
 import Profile from '@/app/main/user/[handle]/_profile';
-import josa from '@/app/api/_utils/josa';
 import { Metadata } from 'next';
 import { GetPrismaClient } from '@/app/api/_utils/getPrismaClient/get-prisma-client';
+import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,19 +15,22 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
       handle: profileHandle,
     },
   });
+
   if (!userProfile) {
     return {
-      title: '찾을 수 없음',
-      description: '그런 유저를 찾을 수 없습니다',
+      title: 'User Not Found',
+      description: 'The requested user could not be found',
     };
   }
 
+  const username = userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1] || '';
+
   return {
-    title: `${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${userProfile.questionBoxName}`,
+    title: `${userProfile.questionBoxName}`,
     openGraph: {
-      title: `${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${userProfile.questionBoxName}`,
-      description: `${userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1]} 님의 ${josa(userProfile.questionBoxName, '이에요!', '예요!')}`,
-      images: userProfile.avatarUrl,
+      title: `${userProfile.questionBoxName}`,
+      description: `${username}'s Question Box`,
+      images: userProfile.avatarUrl ? [userProfile.avatarUrl] : [],
     },
   };
 }
@@ -42,28 +45,16 @@ export default async function ProfilePage({ params }: { params: Promise<{ handle
     },
   });
 
+  if (user === null) {
+    return notFound();
+  }
   return (
     <div className="w-[90%] window:w-[80%] desktop:w-[70%] grid grid-cols-1 desktop:grid-cols-2 gap-4">
-      {user === null ? (
-        <div className="w-full col-span-2 flex flex-col justify-center items-center glass text-4xl rounded-box shadow p-2">
-          😶‍🌫️
-          <span>그런 사용자는 없어요!</span>
-        </div>
-      ) : (
-        <>
-          {user === undefined ? (
-            <div className="w-full col-span-2 flex justify-center">
-              <span className="loading loading-spinner loading-lg" />
-            </div>
-          ) : (
-            <>
-              <a href={`https://${user.hostName}/@${user.account}`} className="hidden" rel={'me'}></a>
-              <Profile />
-              <UserPage />
-            </>
-          )}
-        </>
-      )}
+      <>
+        <a href={`https://${user.hostName}/@${user.account}`} className="hidden" rel={'me'}></a>
+        <Profile />
+        <UserPage />
+      </>
     </div>
   );
 }

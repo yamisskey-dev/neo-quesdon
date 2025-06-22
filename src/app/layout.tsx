@@ -1,64 +1,59 @@
-import type { Metadata, Viewport } from 'next';
-import localFont from 'next/font/local';
-import './globals.css';
-import Image from 'next/image';
+import type { Metadata, Viewport } from 'next'
+import { Suspense } from 'react'
+import { headers } from 'next/headers'
+import localFont from 'next/font/local'
+import { I18nProvider } from './i18n/client'
+import BackgroundWrapper from './_components/wallpaper'
+import './globals.css'
 
-const theJamsil = localFont({
+const sarasaGothic = localFont({
   src: [
-    {
-      path: './fonts/The-Jamsil-1-Thin.ttf',
-      weight: '100',
-    },
-    {
-      path: './fonts/The-Jamsil-3-Regular.ttf',
-      weight: '400',
-    },
-    {
-      path: './fonts/The-Jamsil-6-ExtraBold.ttf',
-      weight: '800',
-    },
+    { path: './fonts/SarasaGothicJ-Regular.ttf', weight: '400' }
   ],
-  variable: '--font-the-jamsil',
-});
+  preload: true,
+  display: 'swap',
+  variable: '--font-sarasa-gothic'
+})
+
+// Add language detection
+function detectLanguage(acceptLanguage: string | null): string {
+  if (!acceptLanguage) return 'ja'
+  const lang = acceptLanguage.split(',')[0].split('-')[0]
+  return ['ja', 'en', 'ko'].includes(lang) ? lang : 'ja'
+}
 
 export const metadata: Metadata = {
   title: 'Neo-Quesdon',
-  description: '세라복.모에의 새로운 Quesdon',
-};
+  description: 'home.subtitle'
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false,
-};
+  userScalable: false
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const randomNumber = Math.ceil(Math.random() * 4);
-
+export default async function RootLayout({
+  children
+}: {
+  children: React.ReactNode
+}) {
+  const headersList = await headers()
+  const lng = detectLanguage(headersList.get('accept-language'))
+  
   return (
-    <html lang="en">
-      <body
-        className={`${theJamsil.variable} antialiased font-[family-name:var(--font-the-jamsil)] bg-transparent w-[100vw] h-[100vh]`}
-      >
-        {children}
-        <div className="fixed top-0 left-0 bg-transparent w-[100vw] h-[100vh] -z-10">
-          <Image
-            src={`/static/${randomNumber}.gif`}
-            alt="App Background"
-            fill={true}
-            unoptimized
-            objectFit="cover"
-            style={{
-              opacity: '0.6',
-            }}
-          />
+    <html lang={lng}>
+      <body className={`${sarasaGothic.variable} relative min-h-screen`}>
+        <Suspense fallback={<div className="loading">Loading...</div>}>
+          <BackgroundWrapper />
+        </Suspense>
+        <div className="relative z-10 min-h-screen">
+          <I18nProvider lng={lng}>
+            {children}
+          </I18nProvider>
         </div>
       </body>
     </html>
-  );
+  )
 }
