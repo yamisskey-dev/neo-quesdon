@@ -71,7 +71,9 @@ async function process(job: Job<importBlockType>) {
 
   switch (server.instanceType) {
     case 'misskey':
-    case 'cherrypick': {
+    case 'cherrypick':
+    case 'iceshrimp':
+    case 'sharkey': {
       let cursor: string | undefined;
       let counter = 0;
       const i = createHash('sha256')
@@ -83,7 +85,7 @@ async function process(job: Job<importBlockType>) {
         const body = {
           limit: 100,
           ...(cursor ? { untilId: cursor } : {}),
-          i: i,
+          ...(server.instanceType === 'iceshrimp' ? {} : { i: i }),
         };
         const options = {
           method: 'POST',
@@ -126,6 +128,7 @@ async function process(job: Job<importBlockType>) {
       return `${user.handle} 의 블락 ${counter} 개를 가져왔습니다.`;
     }
 
+    case 'Iceshrimp_NET':
     case 'mastodon': {
       let counter = 0;
       let url = `https://${user.hostName}/api/v1/blocks?limit=50`;

@@ -9,12 +9,14 @@ export interface userProfileDto {
   questionBoxName: string;
   hostname: string;
   instanceType: $Enums.InstanceType;
+  announcement: string;
 }
 
 export interface userProfileMeDto extends userProfileDto {
   questions: number | null;
   instanceType: $Enums.InstanceType;
   defaultPostVisibility: $Enums.PostVisibility;
+  defaultHideFromTimeline: boolean;
   stopPostAnswer: boolean;
   wordMuteList: string[];
 }

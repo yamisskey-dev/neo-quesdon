@@ -123,6 +123,8 @@ export class AnswerService {
         switch (server.instanceType) {
           case 'misskey':
           case 'cherrypick':
+          case 'iceshrimp':
+          case 'sharkey':
             text = clampText(text, 3000, textEnd, more);
             title = clampText(title, 100, titleEnd, more);
             await mkMisskeyNote(
@@ -130,6 +132,7 @@ export class AnswerService {
               { title: title, text: text, visibility: data.visibility },
             );
             break;
+          case 'Iceshrimp_NET':
           case 'mastodon':
             const titleTotalLen = title.length + titleEnd.length;
             const textTotalLen = text.length + textEnd.length;

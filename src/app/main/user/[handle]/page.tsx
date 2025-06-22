@@ -26,11 +26,11 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   const username = userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1] || '';
 
   return {
-    title: `${userProfile.questionBoxName}`,
+    title: `@${username}'s ${userProfile.questionBoxName}`,
     openGraph: {
-      title: `${userProfile.questionBoxName}`,
-      description: `${username}'s Question Box`,
-      images: userProfile.avatarUrl ? [userProfile.avatarUrl] : [],
+      title: `@${username}'s ${userProfile.questionBoxName}`,
+      description: `@${username}'s ${userProfile.questionBoxName}`,
+      images: userProfile.avatarUrl,
     },
   };
 }
