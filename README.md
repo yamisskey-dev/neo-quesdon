@@ -8,6 +8,9 @@
 # Install dependencies
 npm install
 
+# copy environment variable file
+cp config/local_dev_example.env config/local_dev.env
+
 # Run local db
 docker compose -f compose.local-db.yml up -d
 
