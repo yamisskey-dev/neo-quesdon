@@ -30,7 +30,7 @@ export type FormValue = {
   wordMuteList: string;
   announcement: string;
 };
-async function updateUserSettings(value: FormValue, t: any) {
+async function updateUserSettings(value: FormValue, t: (key: string) => string) {
   const body: UserSettingsUpdateDto = {
     stopAnonQuestion: value.stopAnonQuestion,
     stopNewQuestion: value.stopNewQuestion,
