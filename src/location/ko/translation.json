@@ -27,6 +27,7 @@
   },
   "profile": {
     "inbox": "님의 질문함이에요!",
+    "questionbox_default": "질문함",
     "none": "님은 지금 질문을 받지 않고 있어요...",
     "placeholder": "질문 내용을 입력해 주세요",
     "author": "작성자 공개",
@@ -34,7 +35,9 @@
     "share": "에 질문상자 페이지를 공유",
     "question_sent": "질문했어요!",
     "question_send_failed": "질문을 보내는데 실패했어요! {{error}}",
-    "only_public_questions": "작성자 공개 질문만 받아요!"
+    "only_public_questions": "작성자 공개 질문만 받아요!",
+    "block": "차단",
+    "unblock": "차단 해제"
   },
   "answer": {
     "header:": "답변",
@@ -101,14 +104,22 @@
     "delete_account_btn": "계정 삭제",
     "word_mute_placeholder": "뮤트할 단어, 또는 정규식",
     "stop_notification_dm": "새 질문 DM으로 받지 않기",
-    "stop_post_answer": "내 답변을 올리지 않기", 
+    "stop_post_answer": "내 답변을 올리지 않기",
+    "hide_from_timeline": "내 답변을 메인화면에서 숨기기",
+    "hide_from_timeline_tooltip": "나의 답변을 네오퀘스돈 메인화면에서 숨길 수 있어요.",
     "answer_visibility": "답변을 올릴 때 기본 공개 범위",
+    "answer_visibility_tooltip": "연합우주 계정에 답변을 올릴 때의 공개 범위를 설정해요.",
+    "save_button": "저장",
+    "fetching_blocklist": "블락 리스트 가져오기 시작됨...",
     "visibility": {
       "public": "공개",
       "home": "홈", 
       "followers": "팔로워"
     },
     "questionbox": "질문함",
+    "questionbox_announcement": "질문함 공지",
+    "questionbox_announcement_description": "질문함에 올릴 공지를 입력합니다.",
+    "announcement_placeholder": "최대 80자",
     "security": "보안",
     "dangerous": "위험한 설정",
     "logout_all_devices": "모든 기기에서 로그아웃 하기",

@@ -27,6 +27,7 @@
   },
   "profile": {
     "inbox": "の質問箱です！",
+    "questionbox_default": "質問箱",
     "none": "は今質問を受け取っていません...",
     "placeholder": "質問内容を入力してください",
     "author": "著者開示",
@@ -34,7 +35,9 @@
     "share": "に質問箱ページを共有",
     "question_sent": "質問しました！",
     "question_send_failed": "質問を送信できませんでした！ {{error}}",
-    "only_public_questions": "著者開示質問のみ受け付けています！"
+    "only_public_questions": "著者開示質問のみ受け付けています！",
+    "block": "ブロック",
+    "unblock": "ブロック解除"
   },
   "answer": {
     "header": "回答",
@@ -97,18 +100,26 @@
     "import_blocks_description": "ブロックリストを自分の連合宇宙アカウントから取り込む機能です。ブロックされたユーザーは私にもう質問を送ることができません。ユーザーをブロックするとお互いの回答が隠されます。",
     "import_blocks_btn": "ブロックリストを取り込む",
     "delete_account": "アカウント削除",
-    "delete_account_description": "ネオクエスドンからこのアカウントを削除します。このアカウントで行ったすべての活動が削除されます。",
+    "delete_account_description": "Neo-Quesdonからこのアカウントを削除します。このアカウントで行ったすべての活動が削除されます。",
     "delete_account_btn": "アカウントを削除",
     "word_mute_placeholder": "ミュートするワード、または正規表現",
     "stop_notification_dm": "新しい質問のDM通知を停止",
     "stop_post_answer": "回答を投稿しない",
+    "hide_from_timeline": "私の回答をメインページから隠す",
+    "hide_from_timeline_tooltip": "私の回答をNeo-Quesdonのメインページから隠すことができます。",
     "answer_visibility": "回答投稿時のデフォルト公開範囲",
+    "answer_visibility_tooltip": "連合宇宙アカウントに回答を投稿する時の公開範囲を設定します。",
+    "save_button": "保存",
+    "fetching_blocklist": "ブロックリストを取得中...",
     "visibility": {
       "public": "公開",
       "home": "ホーム",
       "followers": "フォロワー" 
     },
     "questionbox": "質問箱",
+    "questionbox_announcement": "質問箱告知",
+    "questionbox_announcement_description": "質問箱に掲載する告知を入力します。",
+    "announcement_placeholder": "最大80文字",
     "security": "セキュリティ",
     "dangerous": "危険な設定",
     "logout_all_devices": "全デバイスからログアウト",
@@ -120,7 +131,7 @@
     "clear_questions_warning": "未回答の質問をすべて削除しますか？ \nこの操作には時間がかかり、削除された質問は元に戻せません！",
     "clear_questions_btn": "全ての質問を削除", 
     "clean_account": "アカウントをクリーンアップ",
-    "clean_account_warning": "ネオクエスドンでこのアカウントで書いたすべての回答を削除します。この操作には時間がかかり、削除された投稿は元に戻せませんのでご注意ください。",
+    "clean_account_warning": "Neo-Quesdonでこのアカウントで書いたすべての回答を削除します。この操作には時間がかかり、削除された投稿は元に戻せませんのでご注意ください。",
     "clean_account_btn": "全ての回答を削除",
     "please_wait": "少々お待ちください...",
     "blocklist": {

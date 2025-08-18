@@ -27,6 +27,7 @@
     },
     "profile": {
       "inbox": "question box!",
+      "questionbox_default": "Question Box",
       "none": "is not receiving questions right now...",
       "placeholder": "Please enter the question content",
       "author": "author disclosure",
@@ -34,7 +35,9 @@
       "share": "Share the question box page",
       "question_sent": "Asked!",
       "question_send_failed": "Failed to send the question! {{error}}",
-      "only_public_questions": "Only accepts author disclosure questions!"
+      "only_public_questions": "Only accepts author disclosure questions!",
+      "block": "Block",
+      "unblock": "Unblock"
     },
     "answer": {
       "header:": "answer",
@@ -100,14 +103,22 @@
       "delete_account_btn": "Delete account",
       "word_mute_placeholder": "Mute words or regular expressions",
       "stop_notification_dm": "Stop new question DM notifications",
-      "stop_post_answer": "Do not post answers", 
+      "stop_post_answer": "Do not post answers",
+      "hide_from_timeline": "Hide my answers from main page",
+      "hide_from_timeline_tooltip": "You can hide your answers from Neo Quesdon's main page.",
       "answer_visibility": "Default visibility when posting answers",
+      "answer_visibility_tooltip": "Set the visibility scope when posting answers to your federated universe account.",
+      "save_button": "Save",
+      "fetching_blocklist": "Fetching blocklist...",
       "visibility": {
         "public": "public",
         "home": "home", 
         "followers": "followers"
       },
       "questionbox": "Question box",
+      "questionbox_announcement": "Question box announcement",
+      "questionbox_announcement_description": "Enter the announcement to be posted in the question box.",
+      "announcement_placeholder": "Up to 80 characters",
       "security": "Security",
       "dangerous": "Dangerous settings",
       "logout_all_devices": "Log out of all devices",

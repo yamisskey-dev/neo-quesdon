@@ -24,12 +24,17 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
   }
 
   const username = userProfile.handle.match(/(?:@)(.+)(?:@)/)?.[1] || '';
+  
+  // If questionBoxName is the Korean default, use "Question Box" in English for OGP
+  const questionBoxName = userProfile.questionBoxName === '질문함' 
+    ? 'Question Box' 
+    : userProfile.questionBoxName;
 
   return {
-    title: `@${username}'s ${userProfile.questionBoxName}`,
+    title: `@${username}'s ${questionBoxName}`,
     openGraph: {
-      title: `@${username}'s ${userProfile.questionBoxName}`,
-      description: `@${username}'s ${userProfile.questionBoxName}`,
+      title: `@${username}'s ${questionBoxName}`,
+      description: `@${username}'s ${questionBoxName}`,
       images: userProfile.avatarUrl,
     },
   };

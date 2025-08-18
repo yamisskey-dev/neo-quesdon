@@ -262,13 +262,13 @@ export default function Profile() {
                 {isUserBlocked ? (
                   <li>
                     <a className="w-full" onClick={() => unblockConfirmModalRef.current?.showModal()}>
-                      차단 해제
+                      {t('profile.unblock')}
                     </a>
                   </li>
                 ) : (
                   <li>
                     <a className="w-full hover:bg-red-500" onClick={() => blockConfirmModalRef.current?.showModal()}>
-                      차단
+                      {t('profile.block')}
                     </a>
                   </li>
                 )}
@@ -304,7 +304,13 @@ export default function Profile() {
             ) : (
               <div className="flex flex-col items-center window:text-2xl">
                 <NameComponents username={userProfile?.name} width={32} height={32} />
-                <span>{t('profile.inbox')}</span>
+                <span>
+                  {userProfile?.questionBoxName === '질문함' 
+                    ? t('profile.questionbox_default')
+                    : userProfile?.questionBoxName || t('profile.questionbox_default')
+                  }
+                  {t('profile.inbox')}
+                </span>
               </div>
             )}
           </div>

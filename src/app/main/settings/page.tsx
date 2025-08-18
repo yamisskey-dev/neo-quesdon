@@ -30,14 +30,14 @@ export type FormValue = {
   wordMuteList: string;
   announcement: string;
 };
-async function updateUserSettings(value: FormValue) {
+async function updateUserSettings(value: FormValue, t: any) {
   const body: UserSettingsUpdateDto = {
     stopAnonQuestion: value.stopAnonQuestion,
     stopNewQuestion: value.stopNewQuestion,
     stopNotiNewQuestion: value.stopNotiNewQuestion,
     stopPostAnswer: value.stopPostAnswer,
     defaultHideFromTimeline: value.defaultHideFromTimeline,
-    questionBoxName: value.questionBoxName || '질문함',
+    questionBoxName: value.questionBoxName || t('profile.questionbox_default'),
     defaultPostVisibility: value.visibility,
     wordMuteList: value.wordMuteList
       .split('\n')
@@ -94,7 +94,7 @@ export default function Settings() {
         stopNotiNewQuestion: userInfo.stopNotiNewQuestion,
         stopPostAnswer: userInfo.stopPostAnswer,
         defaultHideFromTimeline: userInfo.defaultHideFromTimeline,
-        questionBoxName: userInfo.questionBoxName,
+        questionBoxName: userInfo.questionBoxName === '질문함' ? '' : userInfo.questionBoxName,
         visibility: userInfo.defaultPostVisibility,
         wordMuteList: userInfo.wordMuteList.join('\n'),
         announcement: userInfo.announcement,
@@ -105,7 +105,7 @@ export default function Settings() {
 
   const onSubmit: SubmitHandler<FormValue> = async (value) => {
     if (userInfo) {
-      updateUserSettings(value);
+      updateUserSettings(value, t);
       setButtonClicked(true);
       setTimeout(() => {
         setButtonClicked(false);
@@ -141,7 +141,7 @@ export default function Settings() {
       headers: { 'content-type': 'application/json' },
     });
     if (res.ok) {
-      console.log('계정청소 시작됨...');
+      console.log('Account cleaning started...');
     } else {
       onApiError(res.status, res);
     }
@@ -175,7 +175,7 @@ export default function Settings() {
     setButtonClicked(true);
     const res = await fetch('/api/user/blocking/import', { method: 'POST' });
     if (res.ok) {
-      console.log('블락 리스트 가져오기 시작됨...');
+      console.log(t('settings.fetching_blocklist'));
     } else {
       onApiError(res.status, res);
     }
@@ -189,7 +189,7 @@ export default function Settings() {
     const res = await fetch('/api/db/questions', { method: 'DELETE' });
     setButtonClicked(false);
     if (!res.ok) {
-      throw new Error('질문을 모두 삭제하는데 실패했어요!');
+      throw new Error('Failed to delete all questions!');
     }
   };
 
@@ -198,7 +198,7 @@ export default function Settings() {
     const res = await fetch('/api/user/notification', { method: 'DELETE' });
     setButtonClicked(false);
     if (!res.ok) {
-      throw new Error('알림을 삭제하는데 실패했어요!');
+      throw new Error('Failed to delete notifications!');
     }
   };
 
@@ -212,7 +212,7 @@ export default function Settings() {
         <>
           {userInfo === null || defaultFormValue === undefined ? (
             <div className="w-full flex col-span-3 justify-center">
-              <span className="text-2xl">로그인이 안 되어있어요!</span>
+              <span className="text-2xl">{t('questions.not_logged_in')}</span>
             </div>
           ) : (
             <>
@@ -264,7 +264,7 @@ export default function Settings() {
                             <span className="font-thin">{t('settings.stop_post_answer')}</span>
                             <div
                               className="tooltip tooltip-right flex justify-self-start before:max-w-[14rem] before:break-keep"
-                              data-tip="나의 답변을 네오퀘스돈 메인화면에서 숨길 수 있어요."
+                              data-tip={t('settings.hide_from_timeline_tooltip')}
                             >
                               <input
                                 {...register('defaultHideFromTimeline')}
@@ -272,12 +272,12 @@ export default function Settings() {
                                 className="toggle toggle-success"
                               />
                             </div>
-                            <span className="font-thin">내 답변을 메인화면에서 숨기기</span>
+                            <span className="font-thin">{t('settings.hide_from_timeline')}</span>
 
                             <div className="w-fit col-span-2 desktop:grid desktop:grid-cols-subgrid flex flex-col-reverse justify-center desktop:items-center gap-2 ml-[calc(20%+8px)] desktop:ml-0">
                               <div
                                 className="tooltip tooltip-top desktop:tooltip-right w-fit justify-self-start flex before:max-w-[12rem] break-keep"
-                                data-tip="연합우주 계정에 답변을 올릴 때의 공개 범위를 설정해요."
+                                data-tip={t('settings.answer_visibility_tooltip')}
                               >
                                 <select
                                   {...register('visibility')}
@@ -305,12 +305,12 @@ export default function Settings() {
                           </div>
                           <Divider />
                           <div className='flex flex-col desktop:w-[24rem] gap-2 items-center p-2'>
-                            <h3 className='text-lg'>질문함 공지</h3>
-                            <span className='font-thin'>질문함에 올릴 공지를 입력합니다.</span>
+                            <h3 className='text-lg'>{t('settings.questionbox_announcement')}</h3>
+                            <span className='font-thin'>{t('settings.questionbox_announcement_description')}</span>
                             <textarea
                               {...register("announcement")}
                               className='textarea textarea-bordered w-full min-h-[15vh] text-base'
-                              placeholder='최대 80자'
+                              placeholder={t('settings.announcement_placeholder')}
                               maxLength={80}
                             />
                           </div>
@@ -328,7 +328,7 @@ export default function Settings() {
                           </div>
                           <div className="flex w-full justify-end mt-2">
                             <button type="submit" className={`btn ${buttonClicked ? 'btn-disabled' : 'btn-primary'}`}>
-                              {buttonClicked ? t('settings.please_wait') : '저장'}
+                              {buttonClicked ? t('settings.please_wait') : t('settings.save_button')}
                             </button>
                           </div>
                         </form>
