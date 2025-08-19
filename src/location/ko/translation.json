@@ -16,7 +16,6 @@
     "title": "Neo-Quesdon",
     "subtitle": "Misskey / CherryPick / Mastodon 에서 사용할 수 있는 새로운 Quesdon",
     "login": "로그인",
-    "timeline": "로그인 없이 즐기기",
     "valid_url": "올바른 URL을 입력해주세요",
     "enter_url": "URL을 입력해주세요"
   },

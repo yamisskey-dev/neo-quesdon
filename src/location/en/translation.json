@@ -16,7 +16,6 @@
       "title": "Neo-Quesdon",
       "subtitle": "A new Quesdon that can be used in Misskey / CherryPick / Mastodon",
       "login": "login",
-      "timeline": "peek without login",
       "valid_url": "Please enter a valid URL",
       "enter_url": "Please enter a URL"
     },
