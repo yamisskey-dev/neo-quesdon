@@ -7,6 +7,7 @@ import { CreateAnswerDto } from '@/app/_dto/answers/create-answer.dto';
 import { questionDto } from '@/app/_dto/questions/question.dto';
 import { onApiError } from '@/utils/api-error/onApiError';
 import { useTranslation } from 'react-i18next';
+import { getI18nLocale } from '@/app/i18n/locale';
 
 interface formValue {
   answer: string;
@@ -54,7 +55,7 @@ export default function Question({
     defaultValues: { nsfw: false, hideFromMain: defaultHideFromTimeline, visibility: defaultVisibility, answer: '' },
     mode: 'onChange',
   });
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const onCtrlEnter = async (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
@@ -123,7 +124,7 @@ export default function Question({
     const questionId = singleQuestion.id;
     const draft = sessionStorage.getItem(`draftAnswer:${questionId}`);
     if (draft) {
-      console.debug(`질문 ${questionId} 의 답변 임시저장 복구: ${draft}`);
+      console.debug(`Draft answer restored for question ${questionId}: ${draft}`);
       setValue('answer', draft);
     }
   }, []);
@@ -136,7 +137,7 @@ export default function Question({
       const questionId = singleQuestion.id;
       if (textInput) {
         sessionStorage.setItem(`draftAnswer:${questionId}`, textInput);
-        console.debug(`질문 ${questionId} 의 답변 임시 저장됨: ${textInput}`);
+        console.debug(`Draft answer saved for question ${questionId}: ${textInput}`);
       }
     };
     deBounce(save);
@@ -160,7 +161,7 @@ export default function Question({
           {singleQuestion.question}
         </div>
         <div className="chat-footer opacity-50 dark:text-slate-100 dark:opacity-80">
-          {new Date(singleQuestion.questionedAt).toLocaleString('ko-KR', { hour12: false })}
+          {new Date(singleQuestion.questionedAt).toLocaleString(getI18nLocale(i18n), { hour12: false })}
           <span
             className="text-red-500 font-bold ml-2 cursor-pointer"
             onClick={() => {
@@ -222,7 +223,7 @@ export default function Question({
                         <span className="w-full text-sm desktop:text-md break-keep">{t('question.hide_from')}</span>
                       </>
                     ) : (
-                      <span>로딩중...</span>
+                      <span>{t('common.loading')}...</span>
                     )}
                   </div>
                 </div>
