@@ -8,7 +8,6 @@ import { loginReqDto } from '@/app/_dto/web/login/login.dto';
 import GithubRepoLink from '@/app/_components/github';
 import DialogModalOneButton from '@/app/_components/modalOneButton';
 import { loginCheck } from '@/utils/checkLogin/fastLoginCheck';
-import { logout } from '@/utils/logout/logout';
 import { useTranslation } from 'react-i18next';
 
 interface FormValue {
@@ -53,12 +52,6 @@ const mastodonAuth = async ({ host }: loginReqDto) => {
   return await res.json();
 };
 
-const goWithoutLogin = async () => {
-  try {
-    await logout();
-  } catch {}
-  window.location.replace('/main');
-};
 /**
  * https://example.com/ 같은 URL 형식이나 handle 형식으로 입력한 경우 host로 변환.
  * host를 소문자 처리후 반환
@@ -225,13 +218,6 @@ export default function Home() {
                   <span>{t('home.login')}</span>
                 </div>
               )}
-            </button>
-            <button
-              type="button"
-              className={`btn ml-4 ${isLoading ? 'btn-disabled' : 'btn-outline'}`}
-              onClick={goWithoutLogin}
-            >
-              {t('home.timeline')}
             </button>
           </div>
         </div>

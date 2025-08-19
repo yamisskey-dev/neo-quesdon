@@ -34,6 +34,7 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
   const [noti, setNoti] = useState<NotificationDto>();
   const [questionsNum, setQuestions_num] = useState<number>(0);
   const [loginChecked, setLoginChecked] = useState<boolean>(false);
+  const [authChecking, setAuthChecking] = useState<boolean>(true);
   const apiErrorModalRef = useRef<HTMLDialogElement>(null);
   const [apiErrorModalValue, setApiErrorModalValue] = useState<ApiErrorEventValues>({
     title: '',
@@ -47,9 +48,15 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
   // ------------ Initial Fetch -----------------------------
   useEffect(() => {
     fetchMyProfile(onApiError).then((r) => {
+      if (!r) {
+        // ログインしていない場合はトップページにリダイレクト
+        window.location.replace('/');
+        return;
+      }
       setUserProfileData(r);
       setQuestions_num(r?.questions ?? 0);
       setLoginChecked(true);
+      setAuthChecking(false);
     });
     fetchAllAnswers({ sort: 'DESC', limit: 25 }, onApiError).then((r) => {
       if (r.length === 0) {
@@ -191,6 +198,15 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
       }
     });
   };
+
+  // 認証チェック中はローディング画面を表示
+  if (authChecking) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg" />
+      </div>
+    );
+  }
 
   return (
     <Suspense fallback={<div className="loading">{t('common.loading')}</div>}>
