@@ -11,10 +11,9 @@ import re2 from 're2';
 import { RedisPubSubService } from '@/app/api/_service/redis-pubsub/redis-event.service';
 import { QuestionCreatedPayload, QuestionDeletedPayload } from '@/app/_dto/websocket-event/websocket-event.dto';
 import { isInt } from 'class-validator';
-import { getIpHash } from '@/app/api/_utils/getIp/get-ip-hash';
-import { getIpFromRequest } from '@/app/api/_utils/getIp/get-ip-from-Request';
 import { questionDto } from '@/app/_dto/questions/question.dto';
 import { Body, ValidateBody } from '@/app/api/_utils/Validator/decorator';
+import * as crypto from 'crypto';
 
 export class QuestionService {
   private logger = new Logger('QuestionService');
@@ -50,11 +49,11 @@ export class QuestionService {
     }
   }
 
-  @RateLimit({ bucket_time: 100, req_limit: 10 }, 'user-or-ip')
-  @Auth({ isOptional: true })
+  @RateLimit({ bucket_time: 100, req_limit: 10 }, 'user')
+  @Auth()
   @ValidateBody(CreateQuestionDto)
   public async CreateQuestionApi(
-    req: NextRequest,
+    _req: NextRequest,
     @JwtPayload tokenPayload: jwtPayloadType,
     @Body data: CreateQuestionDto,
   ) {
@@ -77,23 +76,12 @@ export class QuestionService {
         this.logger.debug('User stops NewQuestion');
         return sendApiError(403, 'User stops NewQuestion', 'USER_NOT_ACCEPT_NEW_QUESTION');
       }
-      // 블락 여부 검사
-
-      const blockeeTarget = tokenPayload?.handle ?? getIpHash(getIpFromRequest(req));
+      // ブロック確認（アカウントベース）
       const blocked = await this.prisma.blocking.findFirst({
-        where: { blockeeTarget: blockeeTarget, blockerHandle: questionee_user.handle },
+        where: { blockeeTarget: tokenPayload.handle, blockerHandle: questionee_user.handle },
       });
       if (blocked) {
         return sendApiError(403, 'You Can not Question to this user!', 'QUESTION_BLOCKED');
-      }
-
-      if (!data.isAnonymous && !tokenPayload?.handle) {
-        this.logger.warn(`You must log in to send non-anonymous questions.`);
-        return sendApiError(
-          403,
-          `You must log in to send non-anonymous questions.`,
-          'YOU_MUST_LOGIN_TO_NON_ANONYMOUS_QUESTION',
-        );
       }
 
       const wordMuteList = questionee_profile.wordMuteList;
@@ -118,10 +106,19 @@ export class QuestionService {
       }
 
       //질문 생성
+      // 익명 질문의 경우 사용자 페어별 고유 ID 생성
+      const questioner = data.isAnonymous
+        ? `anon_${crypto
+            .createHash('sha256')
+            .update(`${tokenPayload.handle}:${data.questionee}`)
+            .digest('hex')
+            .substring(0, 16)}`
+        : tokenPayload.handle;
+
       const newQuestion = await this.prisma.question.create({
         data: {
           question: data.question,
-          questioner: tokenPayload?.handle ?? getIpHash(getIpFromRequest(req)),
+          questioner: questioner,
           questioneeHandle: data.questionee,
           isAnonymous: data.isAnonymous,
         },
