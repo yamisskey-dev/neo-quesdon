@@ -356,11 +356,11 @@ export default function Settings() {
                       <CollapseMenu id={'dangerSetting'} text={t('settings.dangerous')}>
                         <div className="w-full flex flex-col items-center">
                           <Divider />
-                          <div className="font-normal text-xl py-3 flex items-center gap-2">
+                          <div className="font-normal text-xl py-3 flex items-center gap-2 w-full px-4 break-words">
                             <MdDeleteSweep size={24} />
                             {t('settings.clear_notifications')}
                           </div>
-                          <div className="font-thin px-4 py-2 break-keep">
+                          <div className="font-thin px-4 py-2 break-words w-full">
                             {t('settings.clear_notifications_warning')}
                           </div>
                           <button
@@ -373,11 +373,11 @@ export default function Settings() {
                             {buttonClicked ? t('settings.please_wait') : t('settings.clear_notifications_btn')}
                           </button>
                           <Divider />
-                          <div className="font-normal text-xl py-3 flex items-center gap-2">
+                          <div className="font-normal text-xl py-3 flex items-center gap-2 w-full px-4 break-words">
                             <MdDeleteSweep size={24} />
                             {t('settings.clear_questions')}
                           </div>
-                          <div className="font-thin px-4 py-2 break-keep">
+                          <div className="font-thin px-4 py-2 break-words w-full">
                             {t('settings.clear_questions_warning')}
                           </div>
                           <button
@@ -390,11 +390,11 @@ export default function Settings() {
                             {buttonClicked ? t('settings.please_wait') : t('settings.clear_questions_btn')}
                           </button>
                           <Divider />
-                          <div className="font-normal text-xl py-3 flex items-center gap-2">
+                          <div className="font-normal text-xl py-3 flex items-center gap-2 w-full px-4 break-words">
                             <FaUserLargeSlash />
                             {t('settings.import_blocks_text')}
                           </div>
-                          <div className="font-thin px-4 py-2 break-keep">
+                          <div className="font-thin px-4 py-2 break-words w-full">
                             {t('settings.import_blocks_description')}
                           </div>
                           <button
@@ -407,11 +407,11 @@ export default function Settings() {
                             {buttonClicked ? t('settings.please_wait') : t('settings.import_blocks_btn')}
                           </button>
                           <Divider />
-                          <div className="font-normal text-xl py-3 flex items-center gap-2">
+                          <div className="font-normal text-xl py-3 flex items-center gap-2 w-full px-4 break-words">
                             <MdOutlineCleaningServices />
                             {t('settings.clean_account')}
                           </div>
-                          <div className="font-thin px-4 py-2 break-keep">
+                          <div className="font-thin px-4 py-2 break-words w-full">
                             {t('settings.clean_account_warning')}
                           </div>
                           <button
@@ -425,11 +425,11 @@ export default function Settings() {
                           </button>
 
                           <Divider />
-                          <div className="font-normal text-xl py-3 flex items-center gap-2">
+                          <div className="font-normal text-xl py-3 flex items-center gap-2 w-full px-4 break-words">
                             <MdDeleteForever size={24} />
                             {t('settings.delete_account')}
                           </div>
-                          <div className="font-thin px-4 py-2 break-keep">
+                          <div className="font-thin px-4 py-2 break-words w-full">
                             {t('settings.delete_account_description')}
                           </div>
                           <button
