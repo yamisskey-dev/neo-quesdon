@@ -1,5 +1,15 @@
 # Neo-Quesdon
 
+> This is the [yami.ski](https://yami.ski) fork of [serafuku/neo-quesdon](https://github.com/serafuku/neo-quesdon), originally developed for serafuku.moe by [@yunochi](https://github.com/yunochi), [@Squarecat-meow](https://github.com/Squarecat-meow) and contributors. All credit for the original implementation goes to the upstream authors.
+
+## Changes in the yami.ski fork
+
+- Multilingual support (i18n) with react-i18next: translated the hard-coded Korean UI into Japanese, with locale detection and optimized translation loading/caching
+- Privacy: completely abolished IP address logging
+- Restricted viewing and asking questions to registered users only
+- UI/UX improvements: mobile layout fixes (line wrapping, width overflow), background wallpaper gacha with smooth transitions, Sarasa Gothic font, new favicon
+- Next.js 15 compatibility fixes (async dynamic APIs, `PageProps` typing) and build fixes for the development environment
+
 ## Getting Started
 
 ### the development server
