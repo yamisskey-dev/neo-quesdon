@@ -24,6 +24,7 @@ export type FormValue = {
   stopNewQuestion: boolean;
   stopNotiNewQuestion: boolean;
   stopPostAnswer: boolean;
+  mutualOnly: boolean;
   defaultHideFromTimeline: boolean;
   questionBoxName: string;
   visibility: $Enums.PostVisibility;
@@ -36,6 +37,7 @@ async function updateUserSettings(value: FormValue, t: (key: string) => string) 
     stopNewQuestion: value.stopNewQuestion,
     stopNotiNewQuestion: value.stopNotiNewQuestion,
     stopPostAnswer: value.stopPostAnswer,
+    mutualOnly: value.mutualOnly,
     defaultHideFromTimeline: value.defaultHideFromTimeline,
     questionBoxName: value.questionBoxName || t('profile.questionbox_default'),
     defaultPostVisibility: value.visibility,
@@ -93,6 +95,7 @@ export default function Settings() {
         stopNewQuestion: userInfo.stopNewQuestion,
         stopNotiNewQuestion: userInfo.stopNotiNewQuestion,
         stopPostAnswer: userInfo.stopPostAnswer,
+        mutualOnly: userInfo.mutualOnly,
         defaultHideFromTimeline: userInfo.defaultHideFromTimeline,
         questionBoxName: userInfo.questionBoxName === '질문함' ? '' : userInfo.questionBoxName,
         visibility: userInfo.defaultPostVisibility,
@@ -273,7 +276,17 @@ export default function Settings() {
                               />
                             </div>
                             <span className="font-thin">{t('settings.hide_from_timeline')}</span>
-
+                            <div
+                              className="tooltip tooltip-right flex justify-self-start before:max-w-[14rem] before:break-keep"
+                              data-tip={t('settings.mutual_only_tooltip')}
+                            >
+                              <input
+                                {...register('mutualOnly')}
+                                type="checkbox"
+                                className="toggle toggle-success"
+                              />
+                            </div>
+                            <span className="font-thin">{t('settings.mutual_only')}</span>
                             <div className="w-fit col-span-2 desktop:grid desktop:grid-cols-subgrid flex flex-col-reverse justify-center desktop:items-center gap-2 ml-[calc(20%+8px)] desktop:ml-0">
                               <div
                                 className="tooltip tooltip-top desktop:tooltip-right w-fit justify-self-start flex before:max-w-[12rem] break-keep"

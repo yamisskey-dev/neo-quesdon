@@ -183,6 +183,7 @@ export class BlockingService {
             blockerHandle: user.handle,
           },
         });
+        await this.redisKvService.drop(`block-${user.handle}`);
         this.logger.debug(`${r.count} block deleted (by id ${deleteById.targetId})`);
         return NextResponse.json({ message: `${r.count} block deleted (by id ${deleteById.targetId})` });
       }
@@ -194,6 +195,7 @@ export class BlockingService {
             hidden: false,
           },
         });
+        await this.redisKvService.drop(`block-${user.handle}`);
         this.logger.debug(`${r.count} block deleted`);
         return NextResponse.json({ message: `${r.count} block deleted` });
       }
@@ -201,12 +203,11 @@ export class BlockingService {
       return sendApiError(500, 'Unblock Error!', 'SERVER_ERROR');
     }
 
-    await this.redisKvService.drop(`block-${user.handle}`);
     return NextResponse.json({}, { status: 200 });
   }
 
   @Auth()
-  @RateLimit({ bucket_time: 60, req_limit: 2 }, 'user')
+  @RateLimit({ bucket_time: 120, req_limit: 2 }, 'user')
   public async importBlockFromRemote(_req: NextRequest, @JwtPayload tokenBody: jwtPayloadType) {
     const user = await this.prisma.user.findUnique({ where: { handle: tokenBody.handle } });
     if (!user) {

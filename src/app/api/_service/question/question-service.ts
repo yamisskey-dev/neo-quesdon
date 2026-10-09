@@ -14,6 +14,7 @@ import { isInt } from 'class-validator';
 import { questionDto } from '@/app/_dto/questions/question.dto';
 import { Body, ValidateBody } from '@/app/api/_utils/Validator/decorator';
 import * as crypto from 'crypto';
+import { RedisKvCacheService } from '../kvCache/redisKvCacheService';
 
 export class QuestionService {
   private logger = new Logger('QuestionService');
@@ -32,14 +33,35 @@ export class QuestionService {
   }
 
   @Auth()
-  @RateLimit({ bucket_time: 300, req_limit: 150 }, 'user')
+  @RateLimit({ bucket_time: 60, req_limit: 60 }, 'user')
   public async GetMyQuestionsApi(_req: NextRequest, @JwtPayload tokenPayload: jwtPayloadType) {
     try {
+      const prisma = GetPrismaClient.getClient();
+      const kv = RedisKvCacheService.getInstance();
+
+      const getBlockList = async () => {
+        return prisma.blocking.findMany({
+          where: { blockerHandle: tokenPayload.handle, hidden: false },
+        });
+      };
+      const getBlockedList = async () => {
+        return prisma.blocking.findMany({
+          where: { blockeeTarget: tokenPayload.handle, hidden: false },
+        })
+      }
+      const blockList = await kv.get(getBlockList, { key: `block-${tokenPayload.handle}`, ttl: 600 });
+      const blockedList = await kv.get(getBlockedList, { key: `blocked-${tokenPayload.handle}`, ttl: 600 });
       const questions = await this.prisma.question.findMany({
         where: { questioneeHandle: tokenPayload.handle },
         orderBy: { questionedAt: 'desc' },
       });
-      const questionDtos = questions.map((q) => questionEntityToDto(q));
+      const filteredQuestions = questions.filter((q) => {
+        if (!q.questioner) return true;
+        if (blockList.find((b) => b.blockeeTarget === q.questioner)) return false;
+        if (blockedList.find((b) => b.blockerHandle === q.questioner)) return false;
+        return true;
+      });
+      const questionDtos = filteredQuestions.map((q) => questionEntityToDto(q));
       return NextResponse.json(questionDtos, {
         status: 200,
         headers: { 'Cache-Control': 'private, no-store, max-age=0' },
@@ -72,10 +94,41 @@ export class QuestionService {
       if (questionee_profile.stopAnonQuestion && data.isAnonymous) {
         this.logger.debug('The user has prohibits anonymous questions.');
         return sendApiError(403, 'The user has prohibits anonymous questions.', 'USER_NOT_ACCEPT_ANONYMOUS_QUESTION');
-      } else if (questionee_profile.stopNewQuestion) {
+      }
+      if (questionee_profile.stopNewQuestion) {
         this.logger.debug('User stops NewQuestion');
         return sendApiError(403, 'User stops NewQuestion', 'USER_NOT_ACCEPT_NEW_QUESTION');
       }
+
+      if (questionee_profile.mutualOnly) {
+        if (!tokenPayload?.handle) {
+          return sendApiError(
+            403,
+            'You must login to send mutual only question',
+            'YOU_MUST_LOGIN_TO_MUTUAL_ONLY_QUESTION',
+          );
+        }
+        const isMe = questionee_profile.handle === tokenPayload.handle;
+        const following =
+          (await this.prisma.following.count({
+            where: {
+              followerHandle: tokenPayload.handle,
+              followeeHandle: questionee_profile.handle,
+            },
+          })) != 0;
+        const followed =
+          (await this.prisma.following.count({
+            where: {
+              followerHandle: questionee_profile.handle,
+              followeeHandle: tokenPayload.handle,
+            },
+          })) != 0;
+        if ((!followed || !following) && !isMe) {
+          this.logger.debug('The user only allows question to mutual follower');
+          return sendApiError(403, 'NOT_MUTUAL_FOLLOWING...', 'NOT_MUTUAL_FOLLOWING');
+        }
+      }
+
       // ブロック確認（アカウントベース）
       const blocked = await this.prisma.blocking.findFirst({
         where: { blockeeTarget: tokenPayload.handle, blockerHandle: questionee_user.handle },

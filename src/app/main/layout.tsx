@@ -3,7 +3,7 @@
 import { userProfileMeDto } from '@/app/_dto/fetch-profile/Profile.dto';
 import { createContext, useEffect, useRef, useState, Suspense } from 'react';
 import { AnswerWithProfileDto } from '../_dto/answers/Answers.dto';
-import { AnswerEv, ApiErrorEv, ApiErrorEventValues, MyProfileEv, NotificationEv } from './_events';
+import { AnswerEv, ApiErrorEv, ApiErrorEventValues, BlockEv, MyProfileEv, NotificationEv } from './_events';
 import { NotificationDto, NotificationPayloadTypes } from '../_dto/notification/notification.dto';
 import { AnswerCreatedPayload, AnswerDeletedEvPayload } from '@/app/_dto/websocket-event/websocket-event.dto';
 import { Logger } from '@/utils/logger/Logger';
@@ -26,7 +26,7 @@ export const AnswersContext = createContext<MainPageContextType | undefined>(und
 export const NotificationContext = createContext<NotificationDto | undefined>(undefined);
 export const MyProfileContext = createContext<userProfileMeDto | undefined>(undefined);
 
-export default function MainLayout({ modal, children }: { children: React.ReactNode; modal: React.ReactNode }) {
+export default function MainLayout({ children }: { children: React.ReactNode }) {
   const [userProfileData, setUserProfileData] = useState<userProfileMeDto | undefined>();
   const [answers, setAnswers] = useState<AnswerWithProfileDto[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -84,6 +84,7 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
     AnswerEv.addAnswerDeletedEventListener(onAnswerDeleted);
     NotificationEv.addNotificationEventListener(onNotiEv);
     ApiErrorEv.addEventListener(onApiErrorEv);
+    BlockEv.addBlockUpdatedEventListener(onBlockUpdated);
     return () => {
       MyProfileEv.removeEventListener(onProfileUpdateEvent);
       AnswerEv.removeFetchMoreRequestEventListener(onFetchMoreEv);
@@ -91,6 +92,7 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
       AnswerEv.removeAnswerDeletedEventListener(onAnswerDeleted);
       NotificationEv.removeNotificationEventListener(onNotiEv);
       ApiErrorEv.removeEventListener(onApiErrorEv);
+      BlockEv.removeBlockUpdatedEventListener(onBlockUpdated);
     };
   }, []);
 
@@ -172,6 +174,20 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
     });
   };
 
+  const onBlockUpdated = () => {
+    setLoading(true);
+    fetchAllAnswers({ sort: 'DESC', limit: 25 }, onApiError).then((r) => {
+      if (r.length === 0) {
+        setAnswers([]);
+        setLoading(false);
+        return;
+      }
+      setAnswers(r);
+      setUntilId(r[r.length - 1].id);
+      setLoading(false);
+    });
+  };
+
   const onAnswerCreated = (ev: CustomEvent<AnswerCreatedPayload>) => {
     if (ev.detail.hideFromMain) {
       return;
@@ -213,7 +229,6 @@ export default function MainLayout({ modal, children }: { children: React.ReactN
       <MyProfileContext.Provider value={userProfileData}>
         <AnswersContext.Provider value={{ answers, loading, untilId }}>
           <NotificationContext.Provider value={noti}>
-            {modal}
             <header className="w-full h-full flex justify-center">
               <Header questionsNum={questionsNum} loginChecked={loginChecked} />
             </header>

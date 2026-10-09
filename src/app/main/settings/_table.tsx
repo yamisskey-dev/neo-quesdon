@@ -5,6 +5,7 @@ import DialogModalLoadingOneButton from '@/app/_components/modalLoadingOneButton
 import DialogModalTwoButton from '@/app/_components/modalTwoButton';
 import { Block, DeleteBlockByIdDto, GetBlockListReqDto, GetBlockListResDto } from '@/app/_dto/blocking/blocking.dto';
 import { onApiError } from '@/utils/api-error/onApiError';
+import { BlockEv } from '@/app/main/_events';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -40,6 +41,7 @@ export default function BlockList() {
     }
     setBlockList((prevList) => (prevList ? [...prevList.filter((prev) => prev.id !== id)] : []));
     setIsLoading(false);
+    BlockEv.sendBlockUpdatedEvent();
   };
 
   const fetchBlocklist = async (req: GetBlockListReqDto): Promise<Block[]> => {

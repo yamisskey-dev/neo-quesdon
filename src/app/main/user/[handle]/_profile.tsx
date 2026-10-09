@@ -15,6 +15,8 @@ import { getProxyUrl } from '@/utils/getProxyUrl/getProxyUrl';
 import { onApiError } from '@/utils/api-error/onApiError';
 import { useTranslation } from 'react-i18next';
 import { FaInfoCircle } from 'react-icons/fa';
+import { BlockEv } from '@/app/main/_events';
+import { checkMutualFollow } from './action/check-mutual-follow';
 
 type FormValue = {
   question: string;
@@ -31,6 +33,30 @@ async function fetchProfile(handle: string) {
   }
 }
 
+function ChatBubble({
+  stopNewQuestion,
+  stopAnonQuestion,
+  mutualOnly,
+}: {
+  stopAnonQuestion: boolean;
+  stopNewQuestion: boolean;
+  mutualOnly: boolean;
+}) {
+  const { t } = useTranslation();
+  let sentence = '';
+  if (stopAnonQuestion) sentence = t('profile.only_public_questions');
+  if (stopNewQuestion) sentence = t('profile.not_accepting_now');
+  if (mutualOnly) sentence = t('profile.mutual_only');
+  if (stopAnonQuestion && mutualOnly) sentence = t('profile.mutual_only_public');
+  return (
+    <div className='chat chat-end w-32 window:w-full desktop:w-full relative bottom-[40%] right-[22%] window:right-[60%] deskstop:left-[60%]'>
+      <div className='chat-bubble text-xs flex items-center bg-base-100 text-slate-700 dark:text-slate-400'>
+        {sentence}
+      </div>
+    </div>
+  );
+}
+
 export default function Profile() {
   const { t } = useTranslation();
   const { handle } = useParams() as { handle: string };
@@ -44,6 +70,7 @@ export default function Profile() {
     title: t('common.success'),
     body: t('profile.question_sent'),
   });
+  const [isMutual, setIsMutual] = useState<boolean | null>(null);
   const questionSendingModalRef = useRef<HTMLDialogElement>(null);
   const blockConfirmModalRef = useRef<HTMLDialogElement>(null);
   const blockSuccessModalRef = useRef<HTMLDialogElement>(null);
@@ -121,9 +148,11 @@ export default function Profile() {
     if (!res.ok) {
       onApiError(res.status, res);
       setIsLoading(false);
+      return;
     }
     setIsUserBlocked(true);
     setIsLoading(false);
+    BlockEv.sendBlockUpdatedEvent();
   };
 
   // 차단 해제하는 함수
@@ -137,9 +166,11 @@ export default function Profile() {
     if (!res.ok) {
       onApiError(res.status, res);
       setIsLoading(false);
+      return;
     }
     setIsUserBlocked(false);
     setIsLoading(false);
+    BlockEv.sendBlockUpdatedEvent();
   };
 
   const onSubmit: SubmitHandler<FormValue> = async (e) => {
@@ -246,6 +277,7 @@ export default function Profile() {
         const data = (await res.json()) as SearchBlockListResDto;
         setIsUserBlocked(data.isBlocked);
       })();
+      checkMutualFollow(profileHandle, localHandle ?? '').then((res) => setIsMutual(res));
     }
   }, [localHandle]);
 
@@ -284,12 +316,12 @@ export default function Profile() {
                   className={`w-24 h-24 object-cover absolute left-[calc(50%-3rem)] rounded-full`}
                 />
               </Link>
-              {userProfile.stopAnonQuestion && !userProfile.stopNewQuestion && (
-                <div className="chat chat-end w-32 window:w-full desktop:w-full relative bottom-[40%] right-[22%] window:right-[60%] deskstop:left-[60%]">
-                  <div className="chat-bubble text-xs flex items-center bg-base-100 text-slate-700 dark:text-slate-400">
-                    {t('profile.only_public_questions')}
-                  </div>
-                </div>
+              {(userProfile.stopNewQuestion || userProfile.stopAnonQuestion || userProfile.mutualOnly) && (
+                <ChatBubble
+                  stopAnonQuestion={userProfile.stopAnonQuestion}
+                  stopNewQuestion={userProfile.stopNewQuestion}
+                  mutualOnly={userProfile.mutualOnly}
+                />
               )}
             </div>
           ) : (
@@ -327,11 +359,23 @@ export default function Profile() {
               required: 'required',
               maxLength: 1000,
             })}
-            placeholder={t('profile.placeholder')}
+            placeholder={(() => {
+              if (localHandle === userProfile?.handle) return t('profile.placeholder');
+              if (userProfile?.stopNewQuestion) return t('profile.not_accepting_now');
+              if (!localHandle && (userProfile?.stopAnonQuestion || isMutual)) return t('profile.no_anonymous_questions');
+              if (userProfile?.mutualOnly && !isMutual) return t('profile.placeholder_mutual_only');
+              return t('profile.placeholder');
+            })()}
             className={`w-[90%] mb-2 font-thin leading-loose textarea ${errors.question ? 'textarea-error' : 'textarea-bordered'
               }`}
             onKeyDown={onCtrlEnter}
-            disabled={userProfile?.stopNewQuestion === true ? true : false}
+            disabled={(() => {
+              if (localHandle === userProfile?.handle) return false;
+              if (userProfile?.stopNewQuestion) return true;
+              if (!localHandle && (userProfile?.stopAnonQuestion || isMutual)) return true;
+              if (userProfile?.mutualOnly && !isMutual) return true;
+              return false;
+            })()}
             style={{ resize: 'none' }}
           />
           {errors.nonAnonQuestion && errors.nonAnonQuestion.type === 'stopAnonQuestion' && (

@@ -36,7 +36,12 @@
     "question_send_failed": "質問を送信できませんでした！ {{error}}",
     "only_public_questions": "著者開示質問のみ受け付けています！",
     "block": "ブロック",
-    "unblock": "ブロック解除"
+    "unblock": "ブロック解除",
+    "not_accepting_now": "今は質問を受け付けていません...",
+    "mutual_only": "相互フォロー限定で質問を受け付けています！",
+    "mutual_only_public": "相互フォロー限定で記名の質問のみ受け付けています！",
+    "no_anonymous_questions": "匿名の質問は受け付けていません...",
+    "placeholder_mutual_only": "相互フォロー限定で質問を受け付けています..."
   },
   "answer": {
     "header": "回答",
@@ -106,6 +111,8 @@
     "stop_post_answer": "回答を投稿しない",
     "hide_from_timeline": "私の回答をメインページから隠す",
     "hide_from_timeline_tooltip": "私の回答をNeo-Quesdonのメインページから隠すことができます。",
+    "mutual_only": "相互フォローのユーザーからのみ質問を受け付ける",
+    "mutual_only_tooltip": "相互フォローの人からのみ質問を受け取れます。",
     "answer_visibility": "回答投稿時のデフォルト公開範囲",
     "answer_visibility_tooltip": "連合宇宙アカウントに回答を投稿する時の公開範囲を設定します。",
     "save_button": "保存",

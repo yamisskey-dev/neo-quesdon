@@ -20,7 +20,7 @@ export class FollowingService {
   }
 
   @Auth()
-  @RateLimit({ bucket_time: 300, req_limit: 300 }, 'user')
+  @RateLimit({ bucket_time: 60, req_limit: 30 }, 'user')
   @ValidateBody(FollowingListReqDto)
   public async getFollowing(_req: NextRequest, @JwtPayload tokenBody: jwtPayloadType, @Body data: FollowingListReqDto) {
     const prisma = GetPrismaClient.getClient();
@@ -28,29 +28,18 @@ export class FollowingService {
 
     const fn = async () => {
       const follows = await prisma.following.findMany({ where: { followerHandle: user.handle } });
-
-      const filteredList = [];
-      for (const f of follows) {
-        const exist = await prisma.profile.findUnique({
-          where: { handle: f.followeeHandle },
-          include: {
-            _count: { select: { answer: true } },
-            user: { include: { server: { select: { instances: true, instanceType: true } } } },
-          },
-        });
-        if (exist) {
-          filteredList.push(exist);
-        }
-      }
-      // 답변순 정렬
+      const filteredList = await prisma.profile.findMany({
+        where: { handle: { in: follows.map((f) => f.followeeHandle) } },
+        include: {
+          user: { include: { server: { select: { instances: true, instanceType: true } } } },
+          answer: { orderBy: { answeredAt: 'desc' }, take: 1, select: { answeredAt: true } },
+        },
+      });
+      // 최근 답변순 정렬
       filteredList.sort((a, b) => {
-        if (a._count.answer > b._count.answer) {
-          return -1;
-        }
-        if (b._count.answer > a._count.answer) {
-          return 1;
-        }
-        return 0;
+        const aAnsweredAt = a.answer[0]?.answeredAt.getTime() ?? 0;
+        const bAnsweredAt = b.answer[0]?.answeredAt.getTime() ?? 0;
+        return bAnsweredAt - aAnsweredAt;
       });
 
       const filteredDto: FollowingListResDto = { followingList: [] };
@@ -69,6 +58,7 @@ export class FollowingService {
             hostname: exist.user.hostName,
             instanceType: exist.user.server.instanceType,
             announcement: exist.announcement,
+            mutualOnly: exist.mutualOnly,
           },
         });
       });
@@ -76,7 +66,7 @@ export class FollowingService {
     };
 
     const kv = RedisKvCacheService.getInstance();
-    const filteredDto = await kv.get(fn, { key: `follow-${user.handle}`, ttl: 600 });
+    const filteredDto = await kv.get(fn, { key: `follow-${user.handle}`, ttl: 300 });
     if (data.limit) {
       filteredDto.followingList = filteredDto.followingList.slice(0, data.limit);
     }

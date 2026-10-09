@@ -36,7 +36,12 @@
     "question_send_failed": "질문을 보내는데 실패했어요! {{error}}",
     "only_public_questions": "작성자 공개 질문만 받아요!",
     "block": "차단",
-    "unblock": "차단 해제"
+    "unblock": "차단 해제",
+    "not_accepting_now": "지금은 질문을 받고 있지 않아요...",
+    "mutual_only": "맞팔 한정으로 질문을 받고 있어요!",
+    "mutual_only_public": "맞팔 한정 기명 질문만 받고 있어요!",
+    "no_anonymous_questions": "익명 질문은 받고 있지 않아요...",
+    "placeholder_mutual_only": "맞팔 한정으로 질문을 받고 있어요..."
   },
   "answer": {
     "header:": "답변",
@@ -106,6 +111,8 @@
     "stop_post_answer": "내 답변을 올리지 않기",
     "hide_from_timeline": "내 답변을 메인화면에서 숨기기",
     "hide_from_timeline_tooltip": "나의 답변을 네오퀘스돈 메인화면에서 숨길 수 있어요.",
+    "mutual_only": "맞팔 유저에게만 질문 받기",
+    "mutual_only_tooltip": "맞팔인 사람에게서만 질문을 받을 수 있어요.",
     "answer_visibility": "답변을 올릴 때 기본 공개 범위",
     "answer_visibility_tooltip": "연합우주 계정에 답변을 올릴 때의 공개 범위를 설정해요.",
     "save_button": "저장",

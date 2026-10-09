@@ -6,11 +6,15 @@ import type { jwtPayloadType } from '@/app/api/_utils/jwt/jwtPayloadType';
 import { RateLimit } from '@/_service/ratelimiter/decorator';
 import { Logger } from '@/utils/logger/Logger';
 import { NextRequest, NextResponse } from 'next/server';
+import { QueueService } from '@/app/api/_service/queue/queueService';
 
 export class ProfileService {
   private logger = new Logger('ProfileService');
+  private queueService: QueueService;
   private static instance: ProfileService;
-  private constructor() {}
+  private constructor() {
+    this.queueService = QueueService.get();
+  }
   public static get() {
     if (!ProfileService.instance) {
       ProfileService.instance = new ProfileService();
@@ -19,7 +23,7 @@ export class ProfileService {
   }
 
   @Auth({ isOptional: true })
-  @RateLimit({ bucket_time: 600, req_limit: 300 }, 'user-or-ip')
+  @RateLimit({ bucket_time: 60, req_limit: 60 }, 'user-or-ip')
   public async fetchProfile(
     req: NextRequest,
     isMe: boolean,
@@ -60,6 +64,7 @@ export class ProfileService {
         hostname: userProfile.user.hostName,
         instanceType: instanceType,
         announcement: userProfile.announcement,
+        mutualOnly: userProfile.mutualOnly
       };
       const resMe: userProfileMeDto = {
         ...resNotMe,
@@ -75,6 +80,12 @@ export class ProfileService {
           headers: { 'Content-type': 'application/json', 'Cache-Control': 'private, no-store, max-age=0' },
         });
       } else {
+        if (resNotMe.mutualOnly) {
+          const user = await prisma.user.findUnique({where: {handle: resNotMe.handle}});
+          if (user) {
+            await this.queueService.addRefreshFollowJob(user, resMe.instanceType);
+          }
+        }
         return NextResponse.json(resNotMe, {
           status: 200,
           headers: { 'Content-type': 'application/json', 'Cache-Control': 'public, max-age=10' },

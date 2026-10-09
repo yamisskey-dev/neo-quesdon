@@ -44,48 +44,76 @@ class RemoteImageProxy {
           if (
             !address.isCorrect() ||
             address.isMulticast() ||
-            address.isInSubnet(new Address4('0.0.0.0/8')) ||
-            address.isInSubnet(new Address4('127.0.0.0/8')) ||
-            address.isInSubnet(new Address4('10.0.0.0/8')) ||
-            address.isInSubnet(new Address4('192.168.0.0/16')) ||
-            address.isInSubnet(new Address4('172.16.0.0/12')) ||
-            address.isInSubnet(new Address4('100.64.0.0/10'))
+            address.isCGNAT() ||
+            address.isPrivate() ||
+            address.isLoopback() ||
+            address.isBroadcast() ||
+            address.isUnspecified() ||
+            address.isLinkLocal()
           ) {
             return sendApiError(400, 'Proxy to private network not allowed', 'BAD_REQUEST');
           }
         } catch (err) {
-          return sendApiError(400, `${String(err)}`, 'BAD_REQUEST');
+          const res = sendApiError(400, `${String(err)}`, 'BAD_REQUEST');
+          res.headers.set('Cache-Control', 'public, max-age=3600');
+          return res;
         }
-        const remote_res = await axios.get(url.toString(), {
-          signal: abortController.signal,
-          onDownloadProgress(progressEvent) {
-            if (progressEvent.loaded > REMOTE_MEDIA_SIZE_LIMIT) {
-              RemoteImageProxy.logger.error('max file size exceeded', progressEvent.loaded);
-              abortController.abort();
-            }
-          },
-          responseType: 'stream',
-          validateStatus: () => {
-            // ignore response code because we handle manually
-            return true;
-          },
-        });
+        let remote_res;
+        try {
+          remote_res = await axios.get(url.toString(), {
+            timeout: 10000,
+            signal: abortController.signal,
+            onDownloadProgress(progressEvent) {
+              if (progressEvent.loaded > REMOTE_MEDIA_SIZE_LIMIT) {
+                RemoteImageProxy.logger.error('max file size exceeded', progressEvent.loaded);
+                abortController.abort();
+              }
+            },
+            responseType: 'stream',
+            validateStatus: () => {
+              // ignore response code because we handle manually
+              return true;
+            },
+          });
+        } catch (err) {
+          if (axios.isAxiosError(err) && err.code === 'ERR_CANCELED') {
+            const res = sendApiError(413, `Remote Content Too Large`, 'REMOTE_MEDIA_TOO_LARGE');
+            res.headers.set('Cache-Control', 'public, max-age=3600');
+            return res;
+          } else {
+            const res = sendApiError(500, `${String(err)}`, 'SERVER_ERROR');
+            res.headers.set('Cache-Control', 'public, max-age=600');
+            return res;
+          }
+        }
 
         if (remote_res.status === 404) {
-          return sendApiError(remote_res.status, `Proxy Fail! Remote Server Send NOT_FOUND`, 'NOT_FOUND');
+          const not_found_res = sendApiError(
+            remote_res.status,
+            `Proxy Fail! Remote Server Send NOT_FOUND`,
+            'NOT_FOUND',
+          );
+          not_found_res.headers.set('Cache-Control', 'public, max-age=3600');
+          return not_found_res;
         } else if (!(remote_res.status === 200)) {
-          return sendApiError(
+          const error_res = sendApiError(
             500,
             `Proxy Fail! Remote server Sent ${remote_res.status}`,
             'REMOTE_SERVER_UNKNOWN_ERROR',
           );
+          error_res.headers.set('Cache-Control', 'public, max-age=600');
+          return error_res;
         }
-        const content_length = remote_res.headers['content-length'];
+        const content_length_value = remote_res.headers['content-length'];
+        let content_length: number | undefined = undefined;
         let content_type = remote_res.headers['content-type'];
-        if (isNumberString(content_length)) {
-          if (parseInt(content_length) > REMOTE_MEDIA_SIZE_LIMIT) {
+        if (typeof content_length_value === 'string' && isNumberString(content_length_value)) {
+          content_length = parseInt(content_length_value);
+          if (content_length > REMOTE_MEDIA_SIZE_LIMIT) {
             abortController.abort();
-            return sendApiError(413, `Remote Content Too Large`, 'REMOTE_MEDIA_TOO_LARGE');
+            const res = sendApiError(413, `Remote Content Too Large`, 'REMOTE_MEDIA_TOO_LARGE');
+            res.headers.set('Cache-Control', 'public, max-age=3600');
+            return res;
           }
         }
         if (typeof content_type !== 'string' || !content_type.startsWith('image/')) {
@@ -99,7 +127,7 @@ class RemoteImageProxy {
         const etag = remote_res.headers['etag'];
 
         const resHeader = {
-          ...(content_length ? { 'content-length': content_length } : {}),
+          ...(content_length ? { 'content-length': String(content_length) } : {}),
           'Content-Type': content_type,
           'Content-Disposition': content_disposition,
           'Cache-Control': 'public, max-age=31536000, immutable',
